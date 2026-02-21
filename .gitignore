@@ -1,0 +1,59 @@
+# OS FILES
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE FILES
+.idea/
+.vscode/
+*.iml
+
+# ENV FILES
+.env
+.env.local
+.env.*.local
+
+# PHP / COMPOSER
+vendor/
+composer.lock
+
+# NODE / FRONTEND
+node_modules/
+frontend/node_modules/
+
+# React/Vite build output
+dist/
+build/
+frontend/dist/
+frontend/build/
+
+# LOG FILES
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# XAMPP / LOCAL SERVER
+xampp/
+php_error_log
+error_log
+
+# CACHE / TEMP
+.cache/
+.tmp/
+tmp/
+storage/
+
+# DATABASE EXPORTS
+*.sql
+*.sqlite
+
+# TEST COVERAGE
+coverage/
+.phpunit.result.cache
+
+# MISC
+*.swp
+*.bak
+*.zip
