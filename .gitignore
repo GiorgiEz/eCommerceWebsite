@@ -45,10 +45,6 @@ error_log
 tmp/
 storage/
 
-# DATABASE EXPORTS
-*.sql
-*.sqlite
-
 # TEST COVERAGE
 coverage/
 .phpunit.result.cache
