@@ -6,8 +6,19 @@ namespace App\Database\Seeder;
 
 use PDO;
 
+/**
+ * Category Seeder class. Inserts data in CATEGORIES table
+ */
 class CategorySeeder extends AbstractSeeder
 {
+    /**
+     * Extracts categories specific data, creates sql statement and inserts the data
+     *
+     * @param  PDO $pdo Database connection object
+     * @param  array $data JSON data, given as array
+     *
+     * @return void Executes the table insertion logic for CATEGORIES table
+     */
     protected function run(PDO $pdo, array $data): void
     {
         $categories = $data['data']['categories'] ?? [];
@@ -19,7 +30,7 @@ class CategorySeeder extends AbstractSeeder
         foreach ($categories as $category) {
             $name = $category['name'] ?? null;
 
-            if (!empty($name) && strlen($name) <= 20) {
+            if (!empty($name)) {
                 $stmt->execute([':name' => $name]);
             }
         }
