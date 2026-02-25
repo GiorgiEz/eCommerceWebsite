@@ -10,6 +10,8 @@ use App\Database\Utils\JsonLoader;
 
 use App\Database\Seeder\CategorySeeder;
 use App\Database\Seeder\CurrencySeeder;
+use App\Database\Seeder\ProductSeeder;
+use App\Database\Seeder\PriceSeeder;
 
 try {
     $pdo = Database::connect(__DIR__ . '/../../.env');
@@ -18,6 +20,8 @@ try {
     $manager = new SeederManager([
         new CategorySeeder(),
         new CurrencySeeder(),
+        new ProductSeeder(),
+        new PriceSeeder(),
     ]);
 
     $manager->run($pdo, $data);

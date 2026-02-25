@@ -22,6 +22,7 @@ class CurrencySeeder extends AbstractSeeder
     protected function run(PDO $pdo, array $data): void
     {
         $products = $data['data']['products'] ?? [];
+        $seen_labels = [];
 
         $stmt = $pdo->prepare(
             'INSERT IGNORE INTO CURRENCIES (CURRENCY_LABEL, CURRENCY_SYMBOL) VALUES (:label, :symbol)'
@@ -34,8 +35,17 @@ class CurrencySeeder extends AbstractSeeder
                 $label = $price['currency']['label'] ?? null;
                 $symbol = $price['currency']['symbol'] ?? null;
 
-                if (!empty($label) && !empty($symbol)) {
-                    $stmt->execute([':label' => $label, ':symbol' => $symbol]);
+                if ($label === null || trim($label) === '' || $symbol === null || trim($symbol) === '') {
+                    continue;
+                }
+
+                if (!isset($seen_labels[$label])) {
+                    $stmt->execute([
+                        ':label' => $label,
+                        ':symbol' => $symbol
+                    ]);
+
+                    $seen_labels[$label] = true;
                 }
             }
         }

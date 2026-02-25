@@ -30,9 +30,10 @@ class CategorySeeder extends AbstractSeeder
         foreach ($categories as $category) {
             $name = $category['name'] ?? null;
 
-            if (!empty($name)) {
-                $stmt->execute([':name' => $name]);
+            if ($name === null || trim($name) === '') {
+                continue;
             }
+            $stmt->execute([':name' => $name]);
         }
     }
 }
