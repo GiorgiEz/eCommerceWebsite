@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Database\Seeder;
+namespace App\Database\Seeder\TableSeeders;
 
+use App\Database\Seeder\AbstractSeeder;
 use PDO;
 
 /**

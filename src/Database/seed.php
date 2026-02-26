@@ -5,13 +5,16 @@ declare(strict_types=1);
 require_once __DIR__ . '/../../vendor/autoload.php';
 
 use App\Database\Config\Database;
-use App\Database\Seeder\SeederManager;
 use App\Database\Utils\JsonLoader;
+use App\Database\Seeder\SeederManager;
 
-use App\Database\Seeder\CategorySeeder;
-use App\Database\Seeder\CurrencySeeder;
-use App\Database\Seeder\ProductSeeder;
-use App\Database\Seeder\PriceSeeder;
+use App\Database\Seeder\TableSeeders\CategorySeeder;
+use App\Database\Seeder\TableSeeders\CurrencySeeder;
+use App\Database\Seeder\TableSeeders\PriceSeeder;
+use App\Database\Seeder\TableSeeders\ProductSeeder;
+use App\Database\Seeder\TableSeeders\ImageSeeder;
+use App\Database\Seeder\TableSeeders\AttributeSeeder;
+use App\Database\Seeder\TableSeeders\AttributeItemSeeder;
 
 try {
     $pdo = Database::connect(__DIR__ . '/../../.env');
@@ -22,6 +25,9 @@ try {
         new CurrencySeeder(),
         new ProductSeeder(),
         new PriceSeeder(),
+        new ImageSeeder(),
+        new AttributeSeeder(),
+        new AttributeItemSeeder(),
     ]);
 
     $manager->run($pdo, $data);

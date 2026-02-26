@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Database\Seeder;
+namespace App\Database\Seeder\TableSeeders;
 
+use App\Database\Seeder\AbstractSeeder;
 use PDO;
 
 /**
@@ -22,9 +23,10 @@ class ProductSeeder extends AbstractSeeder
     protected function run(PDO $pdo, array $data): void
     {
         $products = $data['data']['products'] ?? [];
-        $categories_stmt = $pdo->query('SELECT CATEGORY_NAME, CATEGORY_ID FROM CATEGORIES');
 
+        $categories_stmt = $pdo->query('SELECT CATEGORY_NAME, CATEGORY_ID FROM CATEGORIES');
         $categoryMap = $categories_stmt->fetchAll(PDO::FETCH_KEY_PAIR);
+
         $stmt = $pdo->prepare('
             INSERT IGNORE INTO PRODUCTS 
                 (PRODUCT_CATEGORY_ID, PRODUCT_NAME, PRODUCT_DESCRIPTION, PRODUCT_BRAND, 
