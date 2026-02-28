@@ -43,4 +43,44 @@ abstract class AbstractSeeder implements SeederInterface
      * @return void Executes the general seeder logic, resulting in insertion of data
      */
     abstract protected function run(PDO $pdo, array $data): void;
+
+    protected function isValidProduct(array $product): bool
+    {
+        return isset(
+            $product['id'],
+            $product['name'],
+            $product['inStock'],
+            $product['description'],
+            $product['brand'],
+            $product['category']
+        );
+    }
+
+    protected function isValidPrice(array $price): bool
+    {
+        return isset(
+            $price['amount'],
+            $price['currency'],
+            $price['currency']['symbol'],
+            $price['currency']['label']
+        );
+    }
+
+    protected function isValidAttribute(array $attribute): bool
+    {
+        return isset(
+            $attribute['id'],
+            $attribute['name'],
+            $attribute['type']
+        );
+    }
+
+    protected function isValidAttributeItem(array $attributeItem): bool
+    {
+        return isset(
+            $attributeItem['displayValue'],
+            $attributeItem['value'],
+            $attributeItem['id']
+        );
+    }
 }
