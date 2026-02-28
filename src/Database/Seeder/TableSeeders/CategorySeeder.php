@@ -24,17 +24,18 @@ class CategorySeeder extends AbstractSeeder
     {
         $categories = $data['data']['categories'] ?? [];
 
-        $stmt = $pdo->prepare(
+        $categoryInsertStmt = $pdo->prepare(
             'INSERT IGNORE INTO CATEGORIES (CATEGORY_NAME) VALUES (:name)'
         );
 
         foreach ($categories as $category) {
-            $name = $category['name'] ?? null;
-
-            if ($name === null || trim($name) === '') {
+            if (!isset($category['name'])) {
                 continue;
             }
-            $stmt->execute([':name' => $name]);
+
+            $categoryInsertStmt->execute([
+                ':name' => $category['name']
+            ]);
         }
     }
 }

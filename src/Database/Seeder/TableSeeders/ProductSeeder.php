@@ -24,38 +24,27 @@ class ProductSeeder extends AbstractSeeder
     {
         $products = $data['data']['products'] ?? [];
 
-        $categories_stmt = $pdo->query('SELECT CATEGORY_NAME, CATEGORY_ID FROM CATEGORIES');
-        $categoryMap = $categories_stmt->fetchAll(PDO::FETCH_KEY_PAIR);
+        $categoryStmt = $pdo->query('SELECT CATEGORY_NAME, CATEGORY_ID FROM CATEGORIES');
+        $categoryMap = $categoryStmt->fetchAll(PDO::FETCH_KEY_PAIR);
 
-        $stmt = $pdo->prepare('
+        $productInsertStmt = $pdo->prepare('
             INSERT IGNORE INTO PRODUCTS 
                 (PRODUCT_CATEGORY_ID, PRODUCT_NAME, PRODUCT_DESCRIPTION, PRODUCT_BRAND, 
                     PRODUCT_IN_STOCK, PRODUCT_EXTERNAL_ID) 
             VALUES (:category_id, :name, :description, :brand, :inStock, :external_id)');
 
         foreach ($products as $product) {
-            $categoryName = $product['category'] ?? null;
-            $productName = $product['name'] ?? null;
-            $description = $product['description'] ?? null;
-            $brand = $product['brand'] ?? null;
-            $inStock = isset($product['inStock']) ? (int)$product['inStock'] : null;
-            $externalId = $product['id'] ?? null;
-
-            if ($productName === null || trim($productName) === '' ||
-                $categoryName === null || trim($categoryName) === '' ||
-                $brand === null || trim($brand) === '' ||
-                $inStock === null || $externalId === null || trim($externalId) === '' ||
-                !isset($categoryMap[$categoryName])) {
+            if (!$this->isValidProduct($product) || !isset($categoryMap[$product['category']])) {
                 continue;
             }
 
-            $stmt->execute([
-                ':name' => $productName,
-                ':category_id' => $categoryMap[$categoryName],
-                ':inStock' => $inStock,
-                ':external_id' => $externalId,
-                ':description' => $description,
-                ':brand' => $brand,
+            $productInsertStmt->execute([
+                ':name' => $product['name'],
+                ':category_id' => $categoryMap[$product['category']],
+                ':inStock' => (int) $product['inStock'],
+                ':external_id' => $product['id'],
+                ':description' => $product['description'],
+                ':brand' => $product['brand'],
             ]);
         }
     }

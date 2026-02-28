@@ -23,47 +23,49 @@ class AttributeItemSeeder extends AbstractSeeder
     protected function run(PDO $pdo, array $data): void
     {
         $products = $data['data']['products'] ?? [];
+        $seenAttributeItems = [];
 
-        $attributes_stmt = $pdo->query('SELECT ATTRIBUTE_EXTERNAL_ID, ATTRIBUTE_ID FROM ATTRIBUTES');
-        $attributeMap = $attributes_stmt->fetchAll(PDO::FETCH_KEY_PAIR);
+        $attributesStmt = $pdo->query('SELECT ATTRIBUTE_EXTERNAL_ID, ATTRIBUTE_ID FROM ATTRIBUTES');
+        $attributeMap = $attributesStmt->fetchAll(PDO::FETCH_KEY_PAIR);
 
-        $seenItems = [];
-
-        $stmt = $pdo->prepare(
+        $attributeItemInsertStmt = $pdo->prepare(
             'INSERT IGNORE INTO ATTRIBUTE_ITEMS (ATTRIBUTE_ITEM_ATTRIBUTE_ID, ATTRIBUTE_ITEM_EXTERNAL_ID, 
                 ATTRIBUTE_ITEM_DISPLAY_VALUE, ATTRIBUTE_ITEM_VALUE)
                 VALUES (:attribute_id, :external_id, :display_value, :item_value)'
         );
 
         foreach ($products as $product) {
-            foreach ($product['attributes'] ?? [] as $attribute) {
-                $attributeId = $attributeMap[$attribute['id']] ?? null;
+            if (!$this->isValidProduct($product) || empty($product['attributes'])) {
+                continue;
+            }
 
-                if ($attributeId === null) {
+            foreach ($product['attributes'] as $attribute) {
+                if (!$this->isValidAttribute($attribute) ||
+                    !isset($attributeMap[$attribute['id']]) || empty($attribute['items'])) {
                     continue;
                 }
 
-                foreach ($attribute['items'] ?? [] as $item) {
-                    $itemExternalId = $item['id'] ?? null;
-                    $itemDisplayValue = $item['displayValue'] ?? null;
-                    $itemValue = $item['value'] ?? null;
+                $attributeId = $attributeMap[$attribute['id']];
 
-                    if (!is_string($itemExternalId) || trim($itemExternalId) === '' ||
-                        !is_string($itemDisplayValue) || trim($itemDisplayValue) === '' ||
-                        !is_string($itemValue) || trim($itemValue) === '' ||
-                        isset($seenItems[$attributeId][$itemExternalId])
-                    ) {
+                foreach ($attribute['items'] as $attributeItem) {
+                    if (!$this->isValidAttributeItem($attributeItem)) {
                         continue;
                     }
 
-                    $stmt->execute([
+                    $itemExternalId = $attributeItem['id'];
+
+                    if (isset($seenAttributeItems[$attributeId][$itemExternalId])) {
+                        continue;
+                    }
+
+                    $attributeItemInsertStmt->execute([
                         ':attribute_id' => $attributeId,
                         ':external_id' => $itemExternalId,
-                        ':display_value' => $itemDisplayValue,
-                        ':item_value' => $itemValue,
+                        ':display_value' => $attributeItem['displayValue'],
+                        ':item_value' => $attributeItem['value'],
                     ]);
 
-                    $seenItems[$attributeId][$itemExternalId] = true;
+                    $seenAttributeItems[$attributeId][$itemExternalId] = true;
                 }
             }
         }

@@ -23,31 +23,35 @@ class CurrencySeeder extends AbstractSeeder
     protected function run(PDO $pdo, array $data): void
     {
         $products = $data['data']['products'] ?? [];
-        $seen_labels = [];
+        $seenLabels = [];
 
-        $stmt = $pdo->prepare(
-            'INSERT IGNORE INTO CURRENCIES (CURRENCY_LABEL, CURRENCY_SYMBOL) VALUES (:label, :symbol)'
+        $currencyInsertStmt = $pdo->prepare(
+            'INSERT IGNORE INTO CURRENCIES (CURRENCY_LABEL, CURRENCY_SYMBOL) 
+            VALUES (:label, :symbol)'
         );
 
         foreach($products as $product) {
-            $prices = $product['prices'] ?? [];
+            if (!$this->isValidProduct($product) || empty($product['prices'])) {
+                continue;
+            }
 
-            foreach ($prices as $price) {
-                $label = $price['currency']['label'] ?? null;
-                $symbol = $price['currency']['symbol'] ?? null;
-
-                if ($label === null || trim($label) === '' || $symbol === null || trim($symbol) === '') {
+            foreach ($product['prices'] as $price) {
+                if (!$this->isValidPrice($price)) {
                     continue;
                 }
 
-                if (!isset($seen_labels[$label])) {
-                    $stmt->execute([
-                        ':label' => $label,
-                        ':symbol' => $symbol
-                    ]);
+                $label = $price['currency']['label'];
 
-                    $seen_labels[$label] = true;
+                if (isset($seenLabels[$label])) {
+                    continue;
                 }
+
+                $currencyInsertStmt->execute([
+                    ':label' => $label,
+                    ':symbol' => $price['currency']['symbol']
+                ]);
+
+                $seenLabels[$label] = true;
             }
         }
     }

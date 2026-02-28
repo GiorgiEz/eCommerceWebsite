@@ -27,28 +27,23 @@ class ImageSeeder extends AbstractSeeder
         $productStmt = $pdo->query('SELECT PRODUCT_EXTERNAL_ID, PRODUCT_ID FROM PRODUCTS');
         $productMap = $productStmt->fetchAll(PDO::FETCH_KEY_PAIR);
 
-        $stmt = $pdo->prepare(
+        $imageInsertStmt = $pdo->prepare(
             'INSERT IGNORE INTO IMAGES (IMAGE_PRODUCT_ID, IMAGE_URL)
-                    VALUES (:product_id, :image_url)'
+            VALUES (:product_id, :image_url)'
         );
 
         foreach ($products as $product) {
-            $externalId = $product['id'] ?? null;
-
-            if (!is_string($externalId) || trim($externalId) === '' ||
-                !isset($productMap[$externalId])) {
+            if (!$this->isValidProduct($product) || !isset($productMap[$product['id']]) || empty($product['gallery'])) {
                 continue;
             }
 
-            $productId = $productMap[$externalId];
-
-            foreach ($product['gallery'] ?? [] as $imageUrl) {
+            foreach ($product['gallery'] as $imageUrl) {
                 if (!is_string($imageUrl) || trim($imageUrl) === '') {
                     continue;
                 }
 
-                $stmt->execute([
-                    ':product_id'  => $productId,
+                $imageInsertStmt->execute([
+                    ':product_id'  => $productMap[$product['id']],
                     ':image_url'   => $imageUrl
                 ]);
             }

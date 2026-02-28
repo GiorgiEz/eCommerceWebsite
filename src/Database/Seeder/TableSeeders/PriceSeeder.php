@@ -30,37 +30,31 @@ class PriceSeeder extends AbstractSeeder
         $currencyStmt = $pdo->query('SELECT CURRENCY_LABEL, CURRENCY_ID FROM CURRENCIES');
         $currencyMap = $currencyStmt->fetchAll(PDO::FETCH_KEY_PAIR);
 
-        $stmt = $pdo->prepare(
+        $priceInsertStmt = $pdo->prepare(
             'INSERT IGNORE INTO PRICES (PRICE_PRODUCT_ID, PRICE_CURRENCY_ID, PRICE_AMOUNT)
                     VALUES (:product_id, :currency_id, :amount)'
         );
 
         foreach ($products as $product) {
-            $externalId = $product['id'] ?? null;
-
-            if (!is_string($externalId) || trim($externalId) === '' ||
-                !isset($productMap[$externalId])) {
+            if (!$this->isValidProduct($product) || !isset($productMap[$product['id']]) || empty($product['prices'])) {
                 continue;
             }
 
-            $productId = $productMap[$externalId];
-
-            foreach ($product['prices'] ?? [] as $price) {
-                $amount = $price['amount'] ?? null;
-                $currencyLabel = $price['currency']['label'] ?? null;
-
-                if (!is_numeric($amount) ||
-                    !is_string($currencyLabel) || trim($currencyLabel) === '' ||
-                    !isset($currencyMap[$currencyLabel])) {
+            foreach ($product['prices'] as $price) {
+                if (!$this->isValidPrice($price)) {
                     continue;
                 }
 
-                $currencyId = $currencyMap[$currencyLabel];
+                $currencyLabel = $price['currency']['label'];
 
-                $stmt->execute([
-                    ':product_id'  => $productId,
-                    ':currency_id' => $currencyId,
-                    ':amount'      => (float)$amount
+                if (!isset($currencyMap[$currencyLabel])) {
+                    continue;
+                }
+
+                $priceInsertStmt->execute([
+                    ':product_id'  => $productMap[$product['id']],
+                    ':currency_id' => $currencyMap[$currencyLabel],
+                    ':amount'      => (float) $price['amount']
                 ]);
             }
         }

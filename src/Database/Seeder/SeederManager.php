@@ -20,7 +20,7 @@ class SeederManager
     }
 
     /**
-     * Iterates over the seeders array and runs seed function for each seeder
+     * Executes all registered seeders.
      *
      * @param  PDO $pdo Database connection object
      * @param  array $data JSON data, given as array

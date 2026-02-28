@@ -10,11 +10,12 @@ use App\Database\Seeder\SeederManager;
 
 use App\Database\Seeder\TableSeeders\CategorySeeder;
 use App\Database\Seeder\TableSeeders\CurrencySeeder;
-use App\Database\Seeder\TableSeeders\PriceSeeder;
 use App\Database\Seeder\TableSeeders\ProductSeeder;
+use App\Database\Seeder\TableSeeders\PriceSeeder;
 use App\Database\Seeder\TableSeeders\ImageSeeder;
 use App\Database\Seeder\TableSeeders\AttributeSeeder;
 use App\Database\Seeder\TableSeeders\AttributeItemSeeder;
+use App\Database\Seeder\TableSeeders\ProductAttributeItemSeeder;
 
 try {
     $pdo = Database::connect(__DIR__ . '/../../.env');
@@ -28,6 +29,7 @@ try {
         new ImageSeeder(),
         new AttributeSeeder(),
         new AttributeItemSeeder(),
+        new ProductAttributeItemSeeder(),
     ]);
 
     $manager->run($pdo, $data);

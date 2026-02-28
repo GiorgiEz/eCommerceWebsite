@@ -23,35 +23,36 @@ class AttributeSeeder extends AbstractSeeder
     protected function run(PDO $pdo, array $data): void
     {
         $products = $data['data']['products'] ?? [];
+        $seenAttributes = [];
 
-        $stmt = $pdo->prepare(
+        $attributeInsertStmt = $pdo->prepare(
             'INSERT IGNORE INTO ATTRIBUTES (ATTRIBUTE_NAME, ATTRIBUTE_TYPE, ATTRIBUTE_EXTERNAL_ID)
                 VALUES (:attribute_name, :attribute_type, :attribute_external_id)'
         );
 
-        $seen_attributes = [];
-
         foreach ($products as $product) {
-            foreach ($product['attributes'] ?? [] as $attribute) {
-                $attributeExternalId = $attribute['id'] ?? null;
-                $attributeType = $attribute['type'] ?? null;
-                $attributeName = $attribute['name'] ?? null;
+            if (!$this->isValidProduct($product) || empty($product['attributes'])) {
+                continue;
+            }
 
-                if (!is_string($attributeExternalId) || trim($attributeExternalId) === '' ||
-                    !is_string($attributeType) || trim($attributeType) === '' ||
-                    !is_string($attributeName) || trim($attributeName) === '' ||
-                    isset($seen_attributes[$attributeExternalId])
-                ) {
+            foreach ($product['attributes'] as $attribute) {
+                if (!$this->isValidAttribute($attribute)) {
                     continue;
                 }
 
-                $stmt->execute([
-                    ':attribute_name'   => $attributeName,
-                    ':attribute_type'   => $attributeType,
+                $attributeExternalId = $attribute['id'];
+
+                if (isset($seenAttributes[$attributeExternalId])) {
+                    continue;
+                }
+
+                $attributeInsertStmt->execute([
+                    ':attribute_name'   => $attribute['name'],
+                    ':attribute_type'   => $attribute['type'],
                     ':attribute_external_id' => $attributeExternalId,
                 ]);
 
-                $seen_attributes[$attributeExternalId] = true;
+                $seenAttributes[$attributeExternalId] = true;
             }
         }
     }
