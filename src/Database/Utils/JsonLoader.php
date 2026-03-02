@@ -7,36 +7,45 @@ namespace App\Database\Utils;
 use RuntimeException;
 
 /**
- * Utility class for loading and decoding JSON files.
+ * Class JsonLoader
+ *
+ * Utility class responsible for loading and decoding JSON files.
+ * Used for database seeders and static data loading.
  */
 class JsonLoader
 {
     /**
-     * Loads and decodes a JSON file from the given path.
+     * Loads and decodes a JSON file into an associative array.
      *
-     * @param  string $path Absolute or relative path to the JSON file.
+     * @param string $path Path to the JSON file (absolute or relative)
      *
-     * @throws RuntimeException If the file does not exist, cannot be read,
-     *                          or contains invalid JSON.
+     * @return array Decoded JSON data as an associative array
      *
-     * @return array The decoded JSON data as an associative array.
+     * @throws RuntimeException When the file does not exist, cannot be read,
+     *                          or contains invalid JSON
      */
     public static function load(string $path): array
     {
+        // Ensure the JSON file exists
         if (!file_exists($path)) {
-            throw new RuntimeException("JSON file not found: $path");
+            throw new RuntimeException('JSON file not found: ' . $path);
         }
 
+        // Read file contents
         $content = file_get_contents($path);
 
         if ($content === false) {
-            throw new RuntimeException("Failed to read JSON file.");
+            throw new RuntimeException('Unable to read JSON file.');
         }
 
+        // Decode JSON into an associative array
         $data = json_decode($content, true);
 
+        // Validate JSON decoding
         if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
-            throw new RuntimeException(json_last_error_msg());
+            throw new RuntimeException(
+                'Invalid JSON: ' . json_last_error_msg()
+            );
         }
 
         return $data;

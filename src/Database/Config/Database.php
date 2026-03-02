@@ -9,31 +9,41 @@ use PDOException;
 use RuntimeException;
 
 /**
- * Configuration class to make a connection to the Database
+ * Class Database
+ *
+ * Responsible for establishing and returning a PDO connection
+ * to the MySQL database using credentials from a .env file.
+ *
+ * This class is framework-agnostic and intended to be used
+ * across repositories, services, and GraphQL resolvers.
  */
 class Database
 {
     /**
-     * Connects to Database using given credentials
+     * Creates and returns a PDO connection instance.
      *
-     * @param string $envPath Absolute or relative path to the .env file containing Database credentials.
+     * @param string $envPath Path to the .env configuration file
      *
-     * @return PDO object after successful connection.
-     *@throws RuntimeException If the file does not exist, cannot be read.
+     * @return PDO Active PDO database connection
      *
+     * @throws RuntimeException When the .env file is missing, invalid,
+     *                          or a database connection cannot be established
      */
     public static function connect(string $envPath): PDO
     {
+        // Ensure configuration file exists
         if (!file_exists($envPath)) {
-            throw new RuntimeException('.env file not found.');
+            throw new RuntimeException('Database configuration file (.env) not found.');
         }
 
+        // Parse environment variables from .env file
         $env = parse_ini_file($envPath);
 
         if ($env === false) {
-            throw new RuntimeException('Invalid .env file.');
+            throw new RuntimeException('Unable to read database configuration.');
         }
 
+        // Build MySQL DSN(Data Source Name) string
         $dsn = sprintf(
             'mysql:host=%s;port=%s;dbname=%s;charset=%s',
             $env['DB_HOST'],
@@ -43,13 +53,22 @@ class Database
         );
 
         try {
-            return new PDO($dsn, $env['DB_USER'], $env['DB_PASS'], [
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                PDO::ATTR_EMULATE_PREPARES => false,
-            ]);
-        } catch (PDOException $e) {
-            throw new RuntimeException($e->getMessage());
+            // Create PDO connection with strict error handling
+            return new PDO(
+                $dsn,
+                $env['DB_USER'],
+                $env['DB_PASS'],
+                [
+                    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                    PDO::ATTR_EMULATE_PREPARES   => false,
+                ]
+            );
+        } catch (PDOException $exception) {
+            // Wrap low-level PDO exception in a runtime exception
+            throw new RuntimeException(
+                'Database connection failed: ' . $exception->getMessage()
+            );
         }
     }
 }
