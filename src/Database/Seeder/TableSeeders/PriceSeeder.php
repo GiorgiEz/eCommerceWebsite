@@ -8,17 +8,19 @@ use App\Database\Seeder\AbstractSeeder;
 use PDO;
 
 /**
- * Price Seeder class. Inserts data in PRICES table
+ * Class PriceSeeder
+ *
+ * Seeds the PRICES table using price data from the dataset.
  */
 class PriceSeeder extends AbstractSeeder
 {
     /**
-     * Extracts prices specific data, creates sql statement and inserts the data
+     * Inserts price records into the PRICES table.
      *
-     * @param  PDO $pdo Database connection object
-     * @param  array $data JSON data, given as array
+     * @param PDO   $pdo  Active database connection
+     * @param array $data Seed data loaded from JSON
      *
-     * @return void Executes the table insertion logic for PRICES table
+     * @return void
      */
     protected function run(PDO $pdo, array $data): void
     {

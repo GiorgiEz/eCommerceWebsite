@@ -8,17 +8,19 @@ use App\Database\Seeder\AbstractSeeder;
 use PDO;
 
 /**
- * Product Seeder class. Inserts data in PRODUCTS table
+ * Class ProductSeeder
+ *
+ * Seeds the PRODUCTS table using product data from the dataset.
  */
 class ProductSeeder extends AbstractSeeder
 {
     /**
-     * Extracts products specific data, creates sql statement and inserts the data
+     * Inserts product records into the PRODUCTS table.
      *
-     * @param  PDO $pdo Database connection object
-     * @param  array $data JSON data, given as array
+     * @param PDO   $pdo  Active database connection
+     * @param array $data Seed data loaded from JSON
      *
-     * @return void Executes the table insertion logic for PRODUCTS table
+     * @return void
      */
     protected function run(PDO $pdo, array $data): void
     {

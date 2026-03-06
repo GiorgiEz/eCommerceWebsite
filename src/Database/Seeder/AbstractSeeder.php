@@ -8,17 +8,23 @@ use PDO;
 use Throwable;
 
 /**
- * Seeder abstract class with implemented 'seed' method and 'run' abstract method
+ * Class AbstractSeeder
+ *
+ * Base class for all database seeders.
+ * Provides common functionality such as transaction handling while
+ * delegating table-specific insertion logic to child classes.
  */
 abstract class AbstractSeeder implements SeederInterface
 {
     /**
-     * Opens connection to database, runs seeder function and commits
+     * Executes the seeding process inside a database transaction.
      *
-     * @param  PDO $pdo Database connection object
-     * @param  array $data JSON data, given as array
+     * @param PDO   $pdo  Active database connection
+     * @param array $data Seed data loaded from JSON
      *
-     * @return void Executes the general seeder logic, resulting in insertion of data
+     * @return void
+     *
+     * @throws Throwable Rethrows any exception that occurs during seeding
      */
     final public function seed(PDO $pdo, array $data): void
     {
@@ -28,22 +34,31 @@ abstract class AbstractSeeder implements SeederInterface
             $this->run($pdo, $data);
 
             $pdo->commit();
-        } catch (Throwable $e) {
-            $pdo->rollBack();
-            throw $e;
+        } catch (Throwable $exception) {
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+
+            throw $exception;
         }
     }
 
     /**
-     * 'run' has a specific implementation for each seeder class, it should execute SQL query, inserting data into table
+     * Executes table-specific seeding logic.
      *
-     * @param  PDO $pdo Database connection object
-     * @param  array $data JSON data, given as array
+     * Concrete seeders must implement this method to insert
+     * their respective dataset into the database.
      *
-     * @return void Executes the general seeder logic, resulting in insertion of data
+     * @param PDO   $pdo  Active database connection
+     * @param array $data Seed data loaded from JSON
+     *
+     * @return void
      */
     abstract protected function run(PDO $pdo, array $data): void;
 
+    /**
+     * Validates the required fields of a product dataset.
+     */
     protected function isValidProduct(array $product): bool
     {
         return isset(
@@ -56,6 +71,9 @@ abstract class AbstractSeeder implements SeederInterface
         );
     }
 
+    /**
+     * Validates the required fields of a price dataset.
+     */
     protected function isValidPrice(array $price): bool
     {
         return isset(
@@ -66,6 +84,9 @@ abstract class AbstractSeeder implements SeederInterface
         );
     }
 
+    /**
+     * Validates the required fields of an attribute dataset.
+     */
     protected function isValidAttribute(array $attribute): bool
     {
         return isset(
@@ -75,6 +96,9 @@ abstract class AbstractSeeder implements SeederInterface
         );
     }
 
+    /**
+     * Validates the required fields of an attribute item dataset.
+     */
     protected function isValidAttributeItem(array $attributeItem): bool
     {
         return isset(

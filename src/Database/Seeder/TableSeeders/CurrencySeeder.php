@@ -8,17 +8,19 @@ use App\Database\Seeder\AbstractSeeder;
 use PDO;
 
 /**
- * Currency Seeder class. Inserts data in CURRENCIES table
+ * Class CurrencySeeder
+ *
+ * Seeds the CURRENCIES table using currency data from the dataset.
  */
 class CurrencySeeder extends AbstractSeeder
 {
     /**
-     * Extracts currencies specific data, creates sql statement and inserts the data
+     * Inserts currency records into the CURRENCIES table.
      *
-     * @param  PDO $pdo Database connection object
-     * @param  array $data JSON data, given as array
+     * @param PDO   $pdo  Active database connection
+     * @param array $data Seed data loaded from JSON
      *
-     * @return void Executes the table insertion logic for CURRENCIES table
+     * @return void
      */
     protected function run(PDO $pdo, array $data): void
     {

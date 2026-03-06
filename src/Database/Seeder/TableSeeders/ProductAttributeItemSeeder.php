@@ -8,17 +8,19 @@ use App\Database\Seeder\AbstractSeeder;
 use PDO;
 
 /**
- * ProductAttributeItem Seeder class. Inserts data in PRODUCT_ATTRIBUTE_ITEMS table
+ * Class ProductAttributeItemSeeder
+ *
+ * Seeds the PRODUCT_ATTRIBUTE_ITEMS table using product_attribute_item data from the dataset.
  */
 class ProductAttributeItemSeeder extends AbstractSeeder
 {
     /**
-     * Extracts product_attribute_items specific data, creates sql statement and inserts the data
+     * Inserts product_attribute_item records into the PRODUCT_ATTRIBUTE_ITEMS table.
      *
-     * @param  PDO $pdo Database connection object
-     * @param  array $data JSON data, given as array
+     * @param PDO   $pdo  Active database connection
+     * @param array $data Seed data loaded from JSON
      *
-     * @return void Executes the table insertion logic for PRODUCT_ATTRIBUTE_ITEMS table
+     * @return void
      */
     protected function run(PDO $pdo, array $data): void
     {

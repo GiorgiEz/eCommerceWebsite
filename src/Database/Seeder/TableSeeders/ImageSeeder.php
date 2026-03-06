@@ -8,17 +8,19 @@ use App\Database\Seeder\AbstractSeeder;
 use PDO;
 
 /**
- * Image Seeder class. Inserts data in IMAGES table
+ * Class ImageSeeder
+ *
+ * Seeds the IMAGES table using image data from the dataset.
  */
 class ImageSeeder extends AbstractSeeder
 {
     /**
-     * Extracts images specific data, creates sql statement and inserts the data
+     * Inserts image records into the IMAGES table.
      *
-     * @param  PDO $pdo Database connection object
-     * @param  array $data JSON data, given as array
+     * @param PDO   $pdo  Active database connection
+     * @param array $data Seed data loaded from JSON
      *
-     * @return void Executes the table insertion logic for IMAGES table
+     * @return void
      */
     protected function run(PDO $pdo, array $data): void
     {

@@ -7,17 +7,21 @@ namespace App\Database\Seeder;
 use PDO;
 
 /**
- * Interface to define the general database seeder information.
+ * Interface SeederInterface
+ *
+ * Defines the contract for all database seeders.
+ * Each seeder is responsible for inserting data into a specific table
+ * or related set of tables using the provided dataset.
  */
 interface SeederInterface
 {
     /**
-     * Main method to insert data in database for each Seeder class
+     * Executes the database seeding logic.
      *
-     * @param  PDO $pdo Database connection object
-     * @param  array $data JSON data, given as array
+     * @param PDO   $pdo  Active database connection
+     * @param array $data Seed data loaded from the JSON dataset
      *
-     * @return void Executes the general seeder logic, resulting in insertion of data
+     * @return void
      */
     public function seed(PDO $pdo, array $data): void;
 }

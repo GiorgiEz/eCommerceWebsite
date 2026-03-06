@@ -8,17 +8,19 @@ use App\Database\Seeder\AbstractSeeder;
 use PDO;
 
 /**
- * Attribute Seeder class. Inserts data in ATTRIBUTES table
+ * Class AttributeSeeder
+ *
+ * Seeds the ATTRIBUTES table using attribute data from the dataset.
  */
 class AttributeSeeder extends AbstractSeeder
 {
     /**
-     * Extracts attributes specific data, creates sql statement and inserts the data
+     * Inserts attribute records into the ATTRIBUTES table.
      *
-     * @param  PDO $pdo Database connection object
-     * @param  array $data JSON data, given as array
+     * @param PDO   $pdo  Active database connection
+     * @param array $data Seed data loaded from JSON
      *
-     * @return void Executes the table insertion logic for ATTRIBUTES table
+     * @return void
      */
     protected function run(PDO $pdo, array $data): void
     {
