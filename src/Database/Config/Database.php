@@ -22,42 +22,27 @@ class Database
     /**
      * Creates and returns a PDO connection instance.
      *
-     * @param string $envPath Path to the .env configuration file
-     *
      * @return PDO Active PDO database connection
      *
-     * @throws RuntimeException When the .env file is missing, invalid,
-     *                          or a database connection cannot be established
+     * @throws RuntimeException When the database connection cannot be established
      */
-    public static function connect(string $envPath): PDO
+    public static function connect(): PDO
     {
-        // Ensure configuration file exists
-        if (!file_exists($envPath)) {
-            throw new RuntimeException('Database configuration file (.env) not found.');
-        }
-
-        // Parse environment variables from .env file
-        $env = parse_ini_file($envPath);
-
-        if ($env === false) {
-            throw new RuntimeException('Unable to read database configuration.');
-        }
-
         // Build MySQL DSN(Data Source Name) string
         $dsn = sprintf(
             'mysql:host=%s;port=%s;dbname=%s;charset=%s',
-            $env['DB_HOST'],
-            $env['DB_PORT'],
-            $env['DB_NAME'],
-            $env['DB_CHARSET']
+            $_ENV['DB_HOST'],
+            $_ENV['DB_PORT'],
+            $_ENV['DB_NAME'],
+            $_ENV['DB_CHARSET']
         );
 
         try {
             // Create PDO connection with strict error handling
             return new PDO(
                 $dsn,
-                $env['DB_USER'],
-                $env['DB_PASS'],
+                $_ENV['DB_USER'],
+                $_ENV['DB_PASS'],
                 [
                     PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
                     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
