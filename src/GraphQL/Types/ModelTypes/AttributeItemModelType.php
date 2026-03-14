@@ -2,15 +2,14 @@
 
 namespace App\GraphQL\Types\ModelTypes;
 
-use App\GraphQL\Types\BaseType;
 use GraphQL\Type\Definition\Type;
 
 /**
- * AttributeItemType
+ * AttributeItemModelType
  *
  * GraphQL representation of a AttributeItem entity.
  */
-class AttributeItemType extends BaseType
+class AttributeItemModelType extends BaseModelType
 {
     /**
      * Initializes the GraphQL AttributeItem type schema.

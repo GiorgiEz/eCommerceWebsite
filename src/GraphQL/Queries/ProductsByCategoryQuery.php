@@ -3,7 +3,7 @@
 namespace App\GraphQL\Queries;
 
 use App\Database\Repository\ProductRepository;
-use App\GraphQL\Types\ModelTypes\ProductType;
+use App\GraphQL\Types\ModelTypes\ProductModelType;
 use GraphQL\Type\Definition\Type;
 
 /**
@@ -20,7 +20,7 @@ class ProductsByCategoryQuery
     public static function build(): array
     {
         return [
-            'type' => Type::listOf(ProductType::get()),
+            'type' => Type::listOf(ProductModelType::get()),
             'args' => [
                 'category' => [
                     'type' => Type::string()

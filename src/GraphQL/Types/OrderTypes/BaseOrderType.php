@@ -1,13 +1,13 @@
 <?php
 
-namespace App\GraphQL\Types;
+namespace App\GraphQL\Types\OrderTypes;
 
-use GraphQL\Type\Definition\ObjectType;
+use GraphQL\Type\Definition\InputObjectType;
 
 /**
- * Base class providing singleton behavior for GraphQL types.
+ * Base class providing singleton behavior for GraphQL Order types.
  */
-abstract class BaseType extends ObjectType
+abstract class BaseOrderType extends InputObjectType
 {
     /**
      * Stores singleton instances per type class.

@@ -2,15 +2,14 @@
 
 namespace App\GraphQL\Types\ModelTypes;
 
-use App\GraphQL\Types\BaseType;
 use GraphQL\Type\Definition\Type;
 
 /**
- * AttributeSetType
+ * AttributeSetModelType
  *
  * GraphQL representation of a AttributeSet entity.
  */
-class AttributeSetType extends BaseType
+class AttributeSetModelType extends BaseModelType
 {
     /**
      * Initializes the GraphQL Attribute type schema.
@@ -25,7 +24,7 @@ class AttributeSetType extends BaseType
                 'external_id' => Type::string(),
                 'name' => Type::string(),
                 'type' => Type::string(),
-                'items' => Type::listOf(AttributeItemType::get())
+                'items' => Type::listOf(AttributeItemModelType::get())
             ]
         ]);
     }

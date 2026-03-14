@@ -2,14 +2,13 @@
 
 namespace App\GraphQL\Types\OrderTypes;
 
-use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\Type;
 
 /**
  * GraphQL input type representing a selected attribute for a product.
  * Identifies the attribute and the chosen attribute item.
  */
-class SelectedAttributeInputType extends InputObjectType
+class SelectedAttributeInputType extends BaseOrderType
 {
     /**
      * Defines fields describing a selected attribute option.

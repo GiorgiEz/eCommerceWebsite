@@ -2,28 +2,26 @@
 
 namespace App\GraphQL\Types\ModelTypes;
 
-use App\GraphQL\Types\BaseType;
 use GraphQL\Type\Definition\Type;
 
 /**
- * CurrencyType
+ * CategoryModelType
  *
- * GraphQL representation of a Currency entity.
+ * GraphQL representation of a Category entity.
  */
-class CurrencyType extends BaseType
+class CategoryModelType extends BaseModelType
 {
     /**
-     * Initializes the GraphQL Currency type schema.
+     * Initializes the GraphQL Category type schema.
      *
      * Each field represents a property that can be requested by the client.
      */
     public function __construct()
     {
         parent::__construct([
-            'name' => 'Currency',
+            'name' => 'Category',
             'fields' => [
-                'label' => Type::string(),
-                'symbol' => Type::string(),
+                'name' => Type::string(),
             ]
         ]);
     }

@@ -3,7 +3,7 @@
 namespace App\GraphQL\Queries;
 
 use App\Database\Repository\ProductRepository;
-use App\GraphQL\Types\ModelTypes\ProductType;
+use App\GraphQL\Types\ModelTypes\ProductModelType;
 use GraphQL\Type\Definition\Type;
 
 /**
@@ -19,7 +19,7 @@ class ProductByIdQuery
     public static function build(): array
     {
         return [
-            'type' => ProductType::get(),
+            'type' => ProductModelType::get(),
             'args' => [
                 'external_id' => [
                     'type' => Type::nonNull(Type::string())

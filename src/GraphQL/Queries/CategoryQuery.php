@@ -3,7 +3,7 @@
 namespace App\GraphQL\Queries;
 
 use App\Database\Repository\CategoryRepository;
-use App\GraphQL\Types\ModelTypes\CategoryType;
+use App\GraphQL\Types\ModelTypes\CategoryModelType;
 use GraphQL\Type\Definition\Type;
 
 /**
@@ -19,7 +19,7 @@ class CategoryQuery
     public static function build(): array
     {
         return [
-            'type' => Type::listOf(CategoryType::get()),
+            'type' => Type::listOf(CategoryModelType::get()),
             'resolve' => function () {
                 $repo = new CategoryRepository();
                 return $repo->getAll();

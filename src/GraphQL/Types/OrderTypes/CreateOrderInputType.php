@@ -2,14 +2,13 @@
 
 namespace App\GraphQL\Types\OrderTypes;
 
-use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\Type;
 
 /**
  * GraphQL input type representing the payload required to create an order.
  * Contains order metadata and the list of items included in the order.
  */
-class CreateOrderInputType extends InputObjectType
+class CreateOrderInputType extends BaseOrderType
 {
     /**
      * Defines fields accepted by the createOrder mutation.
@@ -23,7 +22,7 @@ class CreateOrderInputType extends InputObjectType
                 'orderTotalAmount' => Type::nonNull(Type::float()),
 
                 'items' => Type::nonNull(
-                    Type::listOf(Type::nonNull(new OrderItemInputType()))
+                    Type::listOf(Type::nonNull(OrderItemInputType::get()))
                 )
             ]
         ]);

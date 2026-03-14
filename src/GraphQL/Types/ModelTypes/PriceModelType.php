@@ -2,15 +2,14 @@
 
 namespace App\GraphQL\Types\ModelTypes;
 
-use App\GraphQL\Types\BaseType;
 use GraphQL\Type\Definition\Type;
 
 /**
- * PriceType
+ * PriceModelType
  *
  * GraphQL representation of a Price entity.
  */
-class PriceType extends BaseType
+class PriceModelType extends BaseModelType
 {
     /**
      * Initializes the GraphQL Price type schema.
@@ -23,7 +22,7 @@ class PriceType extends BaseType
             'name' => 'Price',
             'fields' => [
                 'amount' => Type::float(),
-                'currency' => CurrencyType::get()
+                'currency' => CurrencyModelType::get()
             ]
         ]);
     }
