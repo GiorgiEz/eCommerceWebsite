@@ -2,7 +2,7 @@
 
 namespace App\GraphQL\Types\ModelTypes;
 
-use GraphQL\Type\Definition\ObjectType;
+use App\GraphQL\Types\BaseType;
 use GraphQL\Type\Definition\Type;
 
 /**
@@ -10,7 +10,7 @@ use GraphQL\Type\Definition\Type;
  *
  * GraphQL representation of a Currency entity.
  */
-class CurrencyType extends ObjectType
+class CurrencyType extends BaseType
 {
     /**
      * Initializes the GraphQL Currency type schema.

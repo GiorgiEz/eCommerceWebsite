@@ -2,7 +2,7 @@
 
 namespace App\GraphQL\Types\ModelTypes;
 
-use GraphQL\Type\Definition\ObjectType;
+use App\GraphQL\Types\BaseType;
 use GraphQL\Type\Definition\Type;
 
 use App\GraphQL\Resolvers\ThumbnailResolver;
@@ -16,7 +16,7 @@ use App\GraphQL\Resolvers\PriceResolver;
  * Defines the fields that can be queried for a product and
  * delegates complex field resolution to dedicated resolver classes.
  */
-class ProductType extends ObjectType
+class ProductType extends BaseType
 {
     /**
      * Initializes the GraphQL Product type schema.
@@ -45,11 +45,11 @@ class ProductType extends ObjectType
                     'description' => Type::string(),
                     'category' => Type::string(),
                     'attributes' => [
-                        'type' => Type::listOf(new AttributeSetType()),
+                        'type' => Type::listOf(AttributeSetType::get()),
                         'resolve' => [AttributeResolver::class, "resolve"]
                     ],
                     'prices' => [
-                        'type' => Type::listOf(new PriceType()),
+                        'type' => Type::listOf(PriceType::get()),
                         'resolve' => [PriceResolver::class, 'resolve']
                     ],
                 ];
