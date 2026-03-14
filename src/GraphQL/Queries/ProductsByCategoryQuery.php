@@ -20,7 +20,7 @@ class ProductsByCategoryQuery
     public static function build(): array
     {
         return [
-            'type' => Type::listOf(new ProductType()),
+            'type' => Type::listOf(ProductType::get()),
             'args' => [
                 'category' => [
                     'type' => Type::string()

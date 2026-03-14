@@ -19,7 +19,7 @@ class CategoryQuery
     public static function build(): array
     {
         return [
-            'type' => Type::listOf(new CategoryType()),
+            'type' => Type::listOf(CategoryType::get()),
             'resolve' => function () {
                 $repo = new CategoryRepository();
                 return $repo->getAll();

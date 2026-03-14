@@ -19,7 +19,7 @@ class ProductByIdQuery
     public static function build(): array
     {
         return [
-            'type' => new ProductType(),
+            'type' => ProductType::get(),
             'args' => [
                 'external_id' => [
                     'type' => Type::nonNull(Type::string())
