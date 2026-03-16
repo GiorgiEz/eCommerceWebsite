@@ -21,7 +21,7 @@ class PriceModelType extends BaseModelType
         parent::__construct([
             'name' => 'Price',
             'fields' => [
-                'amount' => Type::float(),
+                'amount' => Type::string(),
                 'currency' => CurrencyModelType::get()
             ]
         ]);
