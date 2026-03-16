@@ -9,6 +9,11 @@ if (php_sapi_name() !== 'cli') {
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
+use Dotenv\Dotenv;
+
+$dotenv = Dotenv::createImmutable(__DIR__ . '/../');
+$dotenv->load();
+
 use App\Database\Config\Database;
 use App\Database\Utils\JsonLoader;
 use App\Database\Seeder\SeederManager;
@@ -25,7 +30,7 @@ use App\Database\Seeder\TableSeeders\{
 
 try {
     // Establish database connection
-    $pdo = Database::connect(__DIR__ . '/../.env');
+    $pdo = Database::connect();
 
     // Load seed data from JSON file
     $data = JsonLoader::load(__DIR__ . '/../resources/provided_data.json');

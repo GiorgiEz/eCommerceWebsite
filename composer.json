@@ -2,9 +2,15 @@
   "autoload": {
     "psr-4": {
       "App\\": "src/"
+    },
+    "psr-0": {
+      "": "src/"
     }
   },
   "require": {
-    "ext-pdo": "*"
+    "ext-pdo": "*",
+    "webonyx/graphql-php": "^15.30",
+    "nikic/fast-route": "^1.3",
+    "vlucas/phpdotenv": "^5.6"
   }
 }
