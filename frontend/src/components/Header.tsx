@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import type { Category } from "../utils/types.ts";
 import CartOverlay from "./CartOverlay";
 
+
 export default function Header() {
     const { data } = useCategories();
     const { category, setCategory } = useCategory();
@@ -47,7 +48,7 @@ export default function Header() {
                     ) : (
                         <button
                             onClick={() => navigate("/")}
-                            className="uppercase font-medium cursor-pointer hover:shadow-lg h-[4vh] text-[clamp(20px,1.2vw,30px)]"
+                            className="uppercase font-medium cursor-pointer hover:scale-110 h-[4vh] text-[clamp(20px,1.2vw,30px)]"
                         >
                             BACK
                         </button>
@@ -56,9 +57,7 @@ export default function Header() {
 
                 {/* CENTER: Logo */}
                 <div className="absolute left-1/2 transform -translate-x-1/2">
-                    <div className="text-xl font-bold h-[4vh] text-[2vw]">
-                        🛍️
-                    </div>
+                    <div className="font-bold text-[clamp(20px,3vw,40px)]">🛍️</div>
                 </div>
 
                 {/* RIGHT: Cart */}

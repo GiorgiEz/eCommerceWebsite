@@ -1,9 +1,6 @@
 import { createContext, type ReactNode, useContext, useState } from "react";
+import type { CategoryContextType} from "../utils/types";
 
-type CategoryContextType = {
-    category: string;
-    setCategory: (category: string) => void;
-};
 
 const CategoryContext = createContext<CategoryContextType | undefined>(undefined);
 

@@ -1,33 +1,31 @@
-import {createContext, type ReactNode, useContext, useState} from "react";
-import type { Product } from "../utils/types";
+import {createContext, type ReactNode, useContext, useEffect, useState} from "react";
+import type { CartItem, CartContextType } from "../utils/types";
 
-type CartItem = {
-    product: Product;
-    selectedAttributes: Record<string, string>;
-    quantity: number;
-};
-
-type CartContextType = {
-    cartItems: CartItem[];
-    addToCart: (item: CartItem) => void;
-    increaseQty: (item: CartItem) => void;
-    decreaseQty: (item: CartItem) => void;
-    total: number;
-    isOpen: boolean;
-    openCart: () => void;
-    closeCart: () => void;
-    clearCart: () => void;
-};
 
 const CartContext = createContext<CartContextType | null>(null);
 
 export function CartProvider({ children }: { children: ReactNode }) {
-    const [cartItems, setCartItems] = useState<CartItem[]>([]);
+    const [cartItems, setCartItems] = useState<CartItem[]>(() => {
+        try {
+            const stored = localStorage.getItem("cart");
+            return stored ? JSON.parse(stored) : [];
+        } catch {
+            localStorage.removeItem("cart");
+            return [];
+        }
+    });
     const [isOpen, setIsOpen] = useState(false);
 
     const openCart = () => setIsOpen(true);
     const closeCart = () => setIsOpen(false);
-    const clearCart = () => setCartItems([]);
+    const clearCart = () => {
+        setCartItems([]);
+        localStorage.removeItem("cart");
+    };
+
+    useEffect(() => {
+        localStorage.setItem("cart", JSON.stringify(cartItems));
+    }, [cartItems]);
 
     const isSameItem = (a: CartItem, b: CartItem) => {
         return (

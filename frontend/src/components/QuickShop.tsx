@@ -3,11 +3,8 @@ import { useCart } from "../context/CartContext";
 import { client } from "../graphql/client";
 import { GET_PRODUCT } from "../graphql/queries/product";
 
-type Props = {
-    product: Product;
-};
 
-export default function QuickShop({ product }: Props) {
+export default function QuickShop({ product }: {product: Product}) {
     const { addToCart, openCart } = useCart();
 
     if (!product.inStock) return null;

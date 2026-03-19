@@ -1,16 +1,19 @@
 /*
-| Category
+| Category types
 */
-
 export type Category = {
     name: string;
+};
+
+export type CategoryContextType = {
+    category: string;
+    setCategory: (category: string) => void;
 };
 
 
 /*
 | Currency
 */
-
 export type Currency = {
     label: string;
     symbol: string;
@@ -20,7 +23,6 @@ export type Currency = {
 /*
 | Price
 */
-
 export type Price = {
     amount: number;
     currency: Currency;
@@ -28,9 +30,8 @@ export type Price = {
 
 
 /*
-| Product Attributes
+| Product Attributes types
 */
-
 export type AttributeItem = {
     external_id: string;
     value: string;
@@ -48,7 +49,6 @@ export type Attribute = {
 /*
 | Product
 */
-
 export type Product = {
     external_id: string;
     name: string;
@@ -63,7 +63,7 @@ export type Product = {
 
 
 /*
-Cart Item
+Cart Types
  */
 export type CartItem = {
     product: Product;
@@ -71,11 +71,21 @@ export type CartItem = {
     quantity: number;
 };
 
+export type CartContextType = {
+    cartItems: CartItem[];
+    addToCart: (item: CartItem) => void;
+    increaseQty: (item: CartItem) => void;
+    decreaseQty: (item: CartItem) => void;
+    total: number;
+    isOpen: boolean;
+    openCart: () => void;
+    closeCart: () => void;
+    clearCart: () => void;
+};
 
 /*
-| Order Input
+| Order Input Types
 */
-
 export type OrderAttributeInput = {
     attributeId: string;
     attributeItemId: string;
