@@ -1,4 +1,6 @@
-export const GET_PRODUCTS = `
+import { gql } from "graphql-request";
+
+export const GET_PRODUCTS = gql`
 query ProductsByCategory($category: String) {
   products(category: $category) {
     external_id

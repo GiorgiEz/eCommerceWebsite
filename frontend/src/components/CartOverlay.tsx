@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useCart } from "../context/CartContext";
 import { useCreateOrder } from "../hooks/useCreateOrder.ts"
 import { toKebabCase, getFormattedPrice } from "../utils/funcs.ts"
@@ -7,9 +8,11 @@ import type { CartItem } from "../utils/types";
 export default function CartOverlay() {
     const { isOpen, openCart, closeCart, clearCart } = useCart();
     const { cartItems, increaseQty, decreaseQty, total } = useCart();
-    const { createOrder } = useCreateOrder();
+    const { createOrder, loading } = useCreateOrder();
+    const [orderSuccess, setOrderSuccess] = useState(false);
 
     const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+    const isPlaceOrderDisabled = cartItems.length === 0 || orderSuccess || loading;
 
     const handlePlaceOrder = async () => {
         try {
@@ -21,16 +24,21 @@ export default function CartOverlay() {
                     quantity: item.quantity,
                     price: Number(item.product.prices[0].amount),
                     attributes: Object.entries(item.selectedAttributes).map(
-                        ([attributeId, attributeItemId]) => ({
-                            attributeId,
-                            attributeItemId
-                        })
+                        ([attributeId, attributeItemId]) =>
+                            ({attributeId, attributeItemId})
                     )
                 }))
             };
 
             await createOrder(orderInput);
             clearCart();
+            closeCart();
+
+            setOrderSuccess(true);  // show message
+
+            setTimeout(() => {
+                setOrderSuccess(false);
+            }, 2000);  // hide message after 2 seconds
 
         } catch (error) {
             console.error(error);
@@ -50,10 +58,20 @@ export default function CartOverlay() {
                 )}
             </button>
 
+            {/* ORDER SUCCESSFUL MESSAGE */}
+            {orderSuccess && (
+                <div className="
+                        fixed top-20 left-1/2 -translate-x-1/2
+                        bg-green-500 text-white px-6 py-3 rounded shadow-lg z-50
+                      ">
+                    Order placed successfully!
+                </div>
+            )}
+
             {/* OVERLAY */}
             {isOpen && (
                 <>
-                    {/* BACKDROP */}
+                    {/* BACKDROP (MAKE BACKGROUND GRAY WHEN CART IS OPEN) */}
                     <div
                         className="fixed left-0 right-0 bottom-0 top-[8vh] bg-black/30 z-40"
                         onClick={() => closeCart()}
@@ -62,23 +80,23 @@ export default function CartOverlay() {
                     {/* PANEL */}
                     <div className="absolute right-0 mt-4 bg-white shadow-lg z-50 p-4 w-[25vw] max-h-[60vh] text-[1vw]">
 
-                        {/* Header */}
+                        {/* ITEM COUNT */}
                         <div className="font-semibold mb-2">
                             {totalItems} {totalItems === 1 ? "Item" : "Items"}
                         </div>
 
-                        {/* Cart items */}
+                        {/* CART ITEMS */}
                         <div className="h-[40vh] overflow-y-auto space-y-4">
                             {cartItems.map((item: CartItem, index) => (
 
                                 <div key={index} className="flex gap-2 w-full mb-10 items-stretch min-h-[12vh]">
 
-                                    {/* Info */}
+                                    {/* INFO (NAME, PRICE, ATTRIBUTES) */}
                                     <div className="basis-[40%] min-w-0">
                                         <div className="truncate">{item.product.name}</div>
                                         <div>{getFormattedPrice(item.product.prices)}</div>
 
-                                        {/* Attributes */}
+                                        {/* ATTRIBUTES */}
                                         {item.product.attributes.map((attr) => {
                                             const attrKebab = toKebabCase(attr.name);
 
@@ -140,7 +158,7 @@ export default function CartOverlay() {
                                         })}
                                     </div>
 
-                                    {/* Quantity controls */}
+                                    {/* QUANTITY CONTROLS */}
                                     <div className="basis-[20%] flex flex-col items-center justify-between">
                                         <button
                                             data-testid="cart-item-amount-increase"
@@ -161,7 +179,7 @@ export default function CartOverlay() {
                                         </button>
                                     </div>
 
-                                    {/* Image */}
+                                    {/* IMAGE */}
                                     <div className="basis-[40%] flex items-center justify-center">
                                         <div className="w-full h-[10vh] flex items-center justify-center">
                                             <img
@@ -176,23 +194,22 @@ export default function CartOverlay() {
                             ))}
                         </div>
 
-                        {/* Total */}
+                        {/* TOTAL AMOUNT */}
                         <div className="flex justify-between mt-4 mb-2 font-semibold">
                             <span>Total</span>
                             <span data-testid="cart-total">{"$" + total.toFixed(2)}</span>
                         </div>
 
-                        {/* Place Order */}
+                        {/* PLACE ORDER BUTTON */}
                         <button
-                            disabled={cartItems.length === 0}
-                            className={`w-full py-2 font-bold hover:bg-green-400 ${
-                                cartItems.length === 0
-                                    ? "bg-gray-400"
-                                    : "bg-green-500 text-white"
-                            }`}
+                            disabled={isPlaceOrderDisabled}
+                            className={`
+                                w-full py-2 font-bold ${isPlaceOrderDisabled ? "" : "hover:bg-green-400"} 
+                                ${isPlaceOrderDisabled ? "bg-gray-400" : "bg-green-500 text-white"}
+                            `}
                             onClick={handlePlaceOrder}
                         >
-                            PLACE ORDER
+                            {loading ? "PLACING..." : orderSuccess ? "ORDER PLACED" : "PLACE ORDER"}
                         </button>
                     </div>
                 </>

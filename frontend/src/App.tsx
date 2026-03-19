@@ -5,6 +5,7 @@ import ProductDetailsPage from "./pages/ProductDetailsPage";
 import { CategoryProvider } from "./context/CategoryContext";
 import { CartProvider } from "./context/CartContext.tsx";
 
+
 function App() {
     return (
         <BrowserRouter>
@@ -16,6 +17,7 @@ function App() {
                         <Route path="/" element={<ProductListPage />} />
                         <Route path="/product/:externalId" element={<ProductDetailsPage />} />
                     </Routes>
+
                 </CartProvider>
             </CategoryProvider>
         </BrowserRouter>

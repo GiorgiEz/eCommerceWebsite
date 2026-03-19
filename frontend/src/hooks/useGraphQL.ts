@@ -20,7 +20,7 @@ export function useGraphQL<T>(query: string, variables?: Record<string, any>) {
         }
 
         fetchData();
-    }, [query, JSON.stringify(variables)]);
+    }, [query, variables]);
 
     return { data, loading, error };
 }

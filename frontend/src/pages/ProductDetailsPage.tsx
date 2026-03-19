@@ -62,7 +62,7 @@ export default function ProductDetailsPage() {
                 <img
                     src={product.gallery[activeImage]}
                     alt={product.name}
-                    className="w-full h-full object-contain"
+                    className="w-full h-full min-w-[30vw] object-contain"
                 />
 
                 {/* Left arrow */}

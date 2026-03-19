@@ -30,8 +30,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const isSameItem = (a: CartItem, b: CartItem) => {
         return (
             a.product.external_id === b.product.external_id &&
-            JSON.stringify(a.selectedAttributes) ===
-            JSON.stringify(b.selectedAttributes)
+            JSON.stringify(a.selectedAttributes) === JSON.stringify(b.selectedAttributes)
         );
     };
 
@@ -82,14 +81,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
         <CartContext.Provider
             value={{
                 cartItems,
-                addToCart,
-                increaseQty,
-                decreaseQty,
+                addToCart, openCart, closeCart, clearCart,
+                increaseQty, decreaseQty,
                 total,
                 isOpen,
-                openCart,
-                closeCart,
-                clearCart,
             }}
         >
             {children}

@@ -33,8 +33,9 @@ export default function ProductListPage() {
                             className="group relative cursor-pointer hover:shadow-lg transition"
                             onClick={() => navigate(`/product/${product.external_id}`)}
                         >
-                            {/* Product Image */}
+                            {/* Each Image */}
                             <div className="relative p-6 text-[clamp(12px,1.2vw,20px)]">
+                                {/* Product Image */}
                                 <img
                                     src={product.thumbnail} alt={product.name}
                                     className={`w-full h-[30vh] object-contain ${!product.inStock ? "opacity-40" : ""}`}

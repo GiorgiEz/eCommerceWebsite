@@ -1,11 +1,10 @@
+import { useMemo } from "react";
 import { useGraphQL } from "./useGraphQL";
 import { GET_PRODUCTS } from "../graphql/queries/products";
-import type { Product } from "../utils/types.ts";
+import type { Product } from "../utils/types";
 
-type Response = {
-    products: Product[];
-};
 
 export function useProducts(category?: string) {
-    return useGraphQL<Response>(GET_PRODUCTS, { category });
+    const variables = useMemo(() => ({ category }), [category]);
+    return useGraphQL<{products: Product[]}>(GET_PRODUCTS, variables);
 }
