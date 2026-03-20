@@ -2,9 +2,12 @@ import {createContext, type ReactNode, useContext, useEffect, useState} from "re
 import type { CartItem, CartContextType } from "../utils/types";
 
 
+// React Context to provide global access to cart state and actions
 const CartContext = createContext<CartContextType | null>(null);
 
+// Provider component that manages cart state and exposes it to the entire app
 export function CartProvider({ children }: { children: ReactNode }) {
+    // Initialize cart state from localStorage (with fallback and error handling)
     const [cartItems, setCartItems] = useState<CartItem[]>(() => {
         try {
             const stored = localStorage.getItem("cart");
@@ -14,19 +17,19 @@ export function CartProvider({ children }: { children: ReactNode }) {
             return [];
         }
     });
-    const [isOpen, setIsOpen] = useState(false);
+    const [isCartOpen, setIsCartOpen] = useState(false);
 
-    const openCart = () => setIsOpen(true);
-    const closeCart = () => setIsOpen(false);
-    const clearCart = () => {
-        setCartItems([]);
-        localStorage.removeItem("cart");
-    };
+    const openCart = () => setIsCartOpen(true);
+    const closeCart = () => setIsCartOpen(false);
+    const clearCart = () => {setCartItems([]); localStorage.removeItem("cart")};
 
+    // Persist cart state to localStorage whenever cartItems change
     useEffect(() => {
         localStorage.setItem("cart", JSON.stringify(cartItems));
     }, [cartItems]);
 
+    // Determines if two cart items are identical based on product ID and selected attributes
+    // NOTE: JSON.stringify is used for deep comparison of selected attributes
     const isSameItem = (a: CartItem, b: CartItem) => {
         return (
             a.product.external_id === b.product.external_id &&
@@ -34,6 +37,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         );
     };
 
+    // Adds item to cart or increases quantity if identical item already exists
     const addToCart = (item: CartItem) => {
         setCartItems((prev) => {
             const existing = prev.find((p) => isSameItem(p, item));
@@ -50,6 +54,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         });
     };
 
+    // Increases quantity of a matching cart item
     const increaseQty = (item: CartItem) => {
         setCartItems((prev) =>
             prev.map((p) =>
@@ -60,6 +65,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         );
     };
 
+    // Decreases quantity of a matching cart item and removes it if quantity reaches zero
     const decreaseQty = (item: CartItem) => {
         setCartItems((prev) =>
             prev
@@ -72,6 +78,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         );
     };
 
+    // Calculates total cart price based on item price and quantity
     const total = cartItems.reduce(
         (sum, item) => sum + item.quantity * item.product.prices[0].amount,
         0
@@ -84,7 +91,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
                 addToCart, openCart, closeCart, clearCart,
                 increaseQty, decreaseQty,
                 total,
-                isOpen,
+                isCartOpen,
             }}
         >
             {children}
@@ -92,8 +99,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
     );
 }
 
+// Custom hook to safely access cart context within components
 export function useCart() {
-    const ctx = useContext(CartContext);
-    if (!ctx) throw new Error("useCart must be used inside provider");
-    return ctx;
+    const context = useContext(CartContext);
+
+    if (!context) {
+        throw new Error("useCart must be used inside provider");
+    }
+
+    return context;
 }

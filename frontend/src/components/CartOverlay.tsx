@@ -5,15 +5,25 @@ import { toKebabCase, getFormattedPrice } from "../utils/funcs.ts"
 import type { CartItem } from "../utils/types";
 
 
+/*
+    Cart overlay component positioned in the top-right corner.
+    Displays cart items, manages quantity updates, and handles order creation.
+*/
 export default function CartOverlay() {
-    const { isOpen, openCart, closeCart, clearCart } = useCart();
+    // Access cart state and actions from global context
+    const { isCartOpen, openCart, closeCart, clearCart } = useCart();
     const { cartItems, increaseQty, decreaseQty, total } = useCart();
+
+    // Custom hook for creating orders via GraphQL mutation
     const { createOrder, loading } = useCreateOrder();
+
+    // Local UI state to show temporary order success feedback
     const [orderSuccess, setOrderSuccess] = useState(false);
 
     const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
     const isPlaceOrderDisabled = cartItems.length === 0 || orderSuccess || loading;
 
+    // Builds order payload and sends it to backend, then resets cart and shows success message
     const handlePlaceOrder = async () => {
         try {
             const orderInput = {
@@ -34,11 +44,11 @@ export default function CartOverlay() {
             clearCart();
             closeCart();
 
-            setOrderSuccess(true);  // show message
+            setOrderSuccess(true);  // show success message
 
             setTimeout(() => {
                 setOrderSuccess(false);
-            }, 2000);  // hide message after 2 seconds
+            }, 4000);  // hide message after 4 seconds
 
         } catch (error) {
             console.error(error);
@@ -47,9 +57,9 @@ export default function CartOverlay() {
 
     return (
         <div className="relative">
-            {/* CART BUTTON */}
+            {/* CART BUTTON: opens cart overlay */}
             <button data-testid="cart-btn" className="relative h-[4vh] text-[2vw]" onClick={() => openCart()}> 🛒
-                {/* Item count bubble */}
+                {/* Item count badge displayed when cart is not empty */}
                 {totalItems > 0 && (
                     <span className="absolute -top-2 -right-2 bg-black text-white text-xs w-5 h-5 flex
                         items-center justify-center rounded-full">
@@ -58,7 +68,7 @@ export default function CartOverlay() {
                 )}
             </button>
 
-            {/* ORDER SUCCESSFUL MESSAGE */}
+            {/* Temporary success message shown after placing an order */}
             {orderSuccess && (
                 <div className="
                         fixed top-20 left-1/2 -translate-x-1/2
@@ -68,35 +78,35 @@ export default function CartOverlay() {
                 </div>
             )}
 
-            {/* OVERLAY */}
-            {isOpen && (
+            {/* CART OVERLAY */}
+            {isCartOpen && (
                 <>
-                    {/* BACKDROP (MAKE BACKGROUND GRAY WHEN CART IS OPEN) */}
+                    {/* BACKDROP: dark overlay behind cart panel */}
                     <div
                         className="fixed left-0 right-0 bottom-0 top-[8vh] bg-black/30 z-40"
                         onClick={() => closeCart()}
                     />
 
-                    {/* PANEL */}
+                    {/* PANEL: main cart container */}
                     <div className="absolute right-0 mt-4 bg-white shadow-lg z-50 p-4 w-[25vw] max-h-[60vh] text-[1vw]">
 
-                        {/* ITEM COUNT */}
+                        {/* ITEM COUNT HEADER */}
                         <div className="font-semibold mb-2">
                             {totalItems} {totalItems === 1 ? "Item" : "Items"}
                         </div>
 
-                        {/* CART ITEMS */}
+                        {/* CART ITEMS LIST (scrollable) */}
                         <div className="h-[40vh] overflow-y-auto space-y-4">
                             {cartItems.map((item: CartItem, index) => (
 
                                 <div key={index} className="flex gap-2 w-full mb-10 items-stretch min-h-[12vh]">
 
-                                    {/* INFO (NAME, PRICE, ATTRIBUTES) */}
+                                    {/* INFO: product name, price, and attributes */}
                                     <div className="basis-[40%] min-w-0">
                                         <div className="truncate">{item.product.name}</div>
                                         <div>{getFormattedPrice(item.product.prices)}</div>
 
-                                        {/* ATTRIBUTES */}
+                                        {/* ATTRIBUTES: product configuration (size, color, etc.) */}
                                         {item.product.attributes.map((attr) => {
                                             const attrKebab = toKebabCase(attr.name);
 
@@ -120,14 +130,10 @@ export default function CartOverlay() {
                                                                 <div
                                                                     key={opt.external_id}
                                                                     data-testid={
-                                                                        selected
-                                                                            ? `${baseId}-selected`
-                                                                            : baseId
+                                                                        selected ? `${baseId}-selected` : baseId
                                                                     }
                                                                     className={`border ${
-                                                                        selected
-                                                                            ? "border-black"
-                                                                            : "border-gray-300"
+                                                                        selected ? "border-black" : "border-gray-300"
                                                                     } min-w-0`}
                                                                 >
                                                                     {attr.type === "swatch" ? (
@@ -158,7 +164,7 @@ export default function CartOverlay() {
                                         })}
                                     </div>
 
-                                    {/* QUANTITY CONTROLS */}
+                                    {/* QUANTITY CONTROLS: increase/decrease item quantity */}
                                     <div className="basis-[20%] flex flex-col items-center justify-between">
                                         <button
                                             data-testid="cart-item-amount-increase"
@@ -179,7 +185,7 @@ export default function CartOverlay() {
                                         </button>
                                     </div>
 
-                                    {/* IMAGE */}
+                                    {/* PRODUCT IMAGE */}
                                     <div className="basis-[40%] flex items-center justify-center">
                                         <div className="w-full h-[10vh] flex items-center justify-center">
                                             <img
@@ -200,7 +206,7 @@ export default function CartOverlay() {
                             <span data-testid="cart-total">{"$" + total.toFixed(2)}</span>
                         </div>
 
-                        {/* PLACE ORDER BUTTON */}
+                        {/* PLACE ORDER BUTTON with dynamic state (loading/success/disabled) */}
                         <button
                             disabled={isPlaceOrderDisabled}
                             className={`

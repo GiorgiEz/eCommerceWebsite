@@ -77,7 +77,7 @@ export type CartContextType = {
     increaseQty: (item: CartItem) => void;
     decreaseQty: (item: CartItem) => void;
     total: number;
-    isOpen: boolean;
+    isCartOpen: boolean;
     openCart: () => void;
     closeCart: () => void;
     clearCart: () => void;

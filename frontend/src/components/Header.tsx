@@ -5,16 +5,22 @@ import type { Category } from "../utils/types.ts";
 import CartOverlay from "./CartOverlay";
 
 
+/*
+    Header component fixed at the top; displays category navigation or a
+    back button based on current route, and includes the cart overlay
+*/
 export default function Header() {
     const { data } = useCategories();
     const { category, setCategory } = useCategory();
 
+    // React Router hooks for reading current path and navigating programmatically
     const location = useLocation();
     const navigate = useNavigate();
 
     const isHomePage = location.pathname === "/";
-    const categories: Category[] = (data?.categories ?? []).filter(c => c.name !== "all");
+    const categories: Category[] = (data?.categories ?? []);
 
+    // Renders a category button and highlights it if it is the currently selected category
     const renderCategoryButton = (name: string) => {
         const isActive = category === name;
 
@@ -38,11 +44,10 @@ export default function Header() {
         <header className="fixed top-0 left-0 w-full z-50 border-b border-gray-200 bg-white">
             <div className="max-w-7xl mx-auto flex items-center justify-between h-[8vh] px-6">
 
-                {/* LEFT SIDE */}
+                {/* LEFT SIDE: Category navigation or back button depending on route */}
                 <nav className="flex items-center gap-6">
                     {isHomePage ? (
                         <>
-                            {renderCategoryButton("all")}
                             {categories.map((c) => renderCategoryButton(c.name))}
                         </>
                     ) : (
@@ -55,12 +60,12 @@ export default function Header() {
                     )}
                 </nav>
 
-                {/* CENTER: Logo */}
+                {/* CENTER: Logo positioned absolutely in the middle */}
                 <div className="absolute left-1/2 transform -translate-x-1/2">
                     <div className="font-bold text-[clamp(20px,3vw,40px)]">🛍️</div>
                 </div>
 
-                {/* RIGHT: Cart */}
+                {/* RIGHT: Cart overlay component */}
                 <CartOverlay />
 
             </div>

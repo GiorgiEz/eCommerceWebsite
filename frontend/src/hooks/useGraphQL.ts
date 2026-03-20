@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { client } from "../graphql/client";
 
+
+/* Custom React hook to fetch data from GraphQL API with loading and error state management */
 export function useGraphQL<T>(query: string, variables?: Record<string, any>) {
     const [data, setData] = useState<T | null>(null);
     const [loading, setLoading] = useState(true);
