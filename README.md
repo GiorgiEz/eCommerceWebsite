@@ -45,7 +45,7 @@ Follow the steps below to run the project locally.
 
 ---
 
-## 1. Clone the Repository
+### 1. Clone the Repository
 
 ```
 git clone https://github.com/GiorgiEz/eCommerceWebsite.git
@@ -54,7 +54,7 @@ cd eCommerceWebsite
 
 ---
 
-## 2. Install Backend Dependencies
+### 2. Install Backend Dependencies
 
 The backend uses **Composer** for dependency management.
 
@@ -78,7 +78,7 @@ This will install required libraries such as:
 
 ---
 
-## 3. Configure Environment Variables
+### 3. Configure Environment Variables
 
 Create a `.env` file in the project root if it does not already exist.
 
@@ -96,7 +96,7 @@ These variables are used by the database connection class.
 
 ---
 
-## 4. Create the Database
+### 4. Create the Database
 
 Start **XAMPP** and ensure the following services are running:
 
@@ -119,7 +119,7 @@ Import it using phpMyAdmin or MySQL CLI.
 
 ---
 
-## 5. Seed the Database
+### 5. Seed the Database
 
 The project includes a CLI script that loads the provided dataset and populates the database.
 
@@ -149,7 +149,7 @@ This populates the database with the data provided in the assignment.
 
 ---
 
-## 6. Start the Backend Server
+### 6. Start the Backend Server
 
 If using XAMPP, place the project inside the `htdocs` directory.
 
@@ -169,7 +169,7 @@ All API requests should be sent to this endpoint.
 
 ---
 
-## 7. Running the Frontend
+##3 7. Running the Frontend
 
 Navigate to the frontend directory and install dependencies:
 
@@ -187,7 +187,7 @@ The frontend will connect to the backend GraphQL API to retrieve products, categ
 
 ---
 
-## 8. Testing the GraphQL API
+### 8. Testing the GraphQL API
 
 You can test the API using tools such as:
 
@@ -221,7 +221,7 @@ mutation {
 
 The application uses a dataset containing **categories, products, prices, attributes, and images**.
 
-## Categories
+### Categories
 
 Each category contains:
 
@@ -239,7 +239,7 @@ all
 
 ---
 
-## Products
+### Products
 
 Each product contains:
 
@@ -257,7 +257,7 @@ attributes (array)
 
 ---
 
-## Prices
+### Prices
 
 Prices are represented as objects:
 
@@ -284,7 +284,7 @@ Example:
 
 ---
 
-## Attributes
+##3 Attributes
 
 Products can have multiple attributes.
 
@@ -325,21 +325,21 @@ These attributes allow selecting different product variations.
 
 # Technologies Used
 
-## Backend
+### Backend Technologies
 
 * PHP **8.1**
 * GraphQL (webonyx/graphql-php)
 * FastRoute
 * Composer
 
-## Frontend
+### Frontend Technologies
 
 * React
 * TypeScript
 * Vite
 * Tailwind CSS
 
-## Database
+### Database Technologies
 
 * MySQL (Generic SQL)
 * XAMPP used for local development
@@ -416,7 +416,7 @@ The backend is built using **PHP with GraphQL** and follows an **object-oriented
 
 ---
 
-## Application Entry Point
+### Application Entry Point
 
 ```
 public/index.php
@@ -432,7 +432,7 @@ All API requests are handled through this GraphQL endpoint.
 
 ---
 
-## GraphQL Controller
+### GraphQL Controller
 
 ```
 src/Controller/GraphQL.php
@@ -448,7 +448,7 @@ The request context contains **data loaders** used to optimize database access.
 
 ---
 
-## Data Loaders
+### Data Loaders
 
 Loader classes prevent repeated database queries by **preloading data once and reusing it**.
 
@@ -468,11 +468,11 @@ This reduces the **N+1 query problem**.
 
 ---
 
-## GraphQL Schema
+### GraphQL Schema
 
 The schema defines the available queries and mutations.
 
-### Query Types
+#### Query Types
 
 Available queries:
 
@@ -494,7 +494,7 @@ This mutation inserts a new order together with all order items and selected att
 
 ---
 
-## GraphQL Types
+### GraphQL Types
 
 GraphQL types are defined for each model:
 
@@ -518,3 +518,117 @@ SelectedAttributeInput
 ---
 
 # Frontend
+
+### Overview
+
+The frontend is a **React SPA (Single Page Application)** built with **Vite** and integrates with a GraphQL backend. It provides a complete e-commerce UI including product browsing, product details, cart management, and order placement.
+
+---
+
+### Tech Stack
+
+* **React (Vite)** — UI framework
+* **TypeScript** — type safety
+* **React Router** — client-side routing
+* **GraphQL (graphql-request)** — API communication
+* **Tailwind CSS** — styling
+* **Context API** — global state management
+
+---
+
+### Architecture
+
+The frontend follows a **layered architecture**:
+
+```text
+Routing → Pages → Hooks → GraphQL → Context → UI Components
+```
+
+#### 1. Routing
+
+* `/` → Product listing page
+* `/product/:externalId` → Product details page
+
+#### 2. Global State (Context)
+
+* **CategoryContext** → manages selected category
+* **CartContext** → manages cart items, total, and persistence (localStorage)
+
+#### 3. Data Layer (Hooks)
+
+Custom hooks abstract data fetching:
+
+* `useCategories()` → fetch all categories
+* `useProducts(category)` → fetch products by category
+* `useProduct(id)` → fetch single product
+* `useCreateOrder()` → create order mutation
+* `useGraphQL` → reusable base hook (handles loading, error, data)
+
+#### 4. Pages
+
+* **ProductListPage** → displays products grid
+* **ProductDetailsPage** → handles product configuration (attributes, gallery, add to cart)
+
+#### 5. Components
+
+* **Header** → navigation + cart access
+* **CartOverlay** → cart UI, quantity updates, order handling
+* **QuickShop** → quick add-to-cart from product list
+
+#### 6. Utilities
+
+Reusable helper functions:
+
+* formatting prices
+* truncating text
+* transforming strings (e.g., kebab-case)
+
+---
+
+### Key Features
+
+* Category-based product filtering
+* Product detail page with:
+
+    * image gallery
+    * attribute selection (size, color, etc.)
+* Cart functionality:
+
+    * add/remove items
+    * quantity control
+    * persistent storage (localStorage)
+* Quick shop (add to cart without opening product page)
+* Order creation with GraphQL mutation
+* Responsive UI
+
+---
+
+### Data Flow Example
+
+```text
+User selects category
+→ CategoryContext updates
+→ useProducts fetches data
+→ UI re-renders product list
+
+User adds item to cart
+→ CartContext updates state
+→ localStorage sync
+→ CartOverlay reflects changes
+```
+
+---
+
+### State Management
+
+* **Local state** → UI-specific (selected attributes, gallery, toggles)
+* **Global state (Context)** → shared data (cart, category)
+* **Persistent state** → cart stored in localStorage
+
+---
+
+### Notes
+
+* GraphQL is used to fetch only required data per view
+* Custom hooks ensure separation of concerns and reusability
+* Components are designed to be modular and composable
