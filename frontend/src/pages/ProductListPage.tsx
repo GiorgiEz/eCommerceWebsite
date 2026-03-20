@@ -6,12 +6,14 @@ import type { Product } from "../utils/types.ts";
 import { toKebabCase, getFormattedPrice } from "../utils/funcs.ts"
 
 
+// Product listing page that displays products filtered by selected category
 export default function ProductListPage() {
     const { category } = useCategory();
     const { data, loading } = useProducts(category);
 
     const products: Product[] = data?.products ?? [];
 
+    // React Router hook for navigating to product detail page
     const navigate = useNavigate();
 
     if (loading) {
@@ -20,7 +22,7 @@ export default function ProductListPage() {
 
     return (
         <div className="max-w-7xl mx-auto p-6 pt-[10vh]">
-            {/* Category Title */}
+            {/* Category title based on selected category */}
             <h1 className="text-3xl font-semibold mb-8 capitalize">{category}</h1>
 
             {/* Product Grid */}
@@ -33,7 +35,7 @@ export default function ProductListPage() {
                             className="group relative cursor-pointer hover:shadow-lg transition"
                             onClick={() => navigate(`/product/${product.external_id}`)}
                         >
-                            {/* Each Image */}
+                            {/* Individual product card (click navigates to product detail page) */}
                             <div className="relative p-6 text-[clamp(12px,1.2vw,20px)]">
                                 {/* Product Image */}
                                 <img
@@ -48,7 +50,7 @@ export default function ProductListPage() {
                                     </div>
                                 )}
 
-                                {/* Quick shop button */}
+                                {/* Quick shop button for adding product directly to cart */}
                                 <QuickShop product={product} />
 
                                 {/* Product Name */}
@@ -60,7 +62,7 @@ export default function ProductListPage() {
                                     {product.name}
                                 </div>
 
-                                {/* Product Price */}
+                                {/* Product price formatted based on currency */}
                                 <div
                                     className={`mt-1 font-semibold ${
                                         !product.inStock ? "text-gray-400" : "text-gray-700"

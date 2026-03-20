@@ -7,10 +7,15 @@ import type { Product, AttributeItem } from "../utils/types.ts";
 import { toKebabCase, truncateText, getFormattedPrice } from "../utils/funcs.ts"
 
 
+// Product details page that displays full product info, handles attribute selection, and allows adding to cart
 export default function ProductDetailsPage() {
+    // Extract product ID from URL and fetch corresponding product data
     const { externalId } = useParams();
     const { data, loading } = useProduct(externalId as string);
-    const { addToCart, openCart } = useCart();
+
+    const { addToCart, openCart } = useCart();  // Access cart actions from global context
+
+    // Local state for selected attributes, active image index, and description toggle
     const [selectedAttributes, setSelectedAttributes] = useState<Record<string, string>>({});
     const [activeImage, setActiveImage] = useState(0);
     const [descriptionExpanded, setDescriptionExpanded] = useState(false);
@@ -25,9 +30,10 @@ export default function ProductDetailsPage() {
         return <div className="p-8">Product not found</div>;
     }
 
+    // Determine if description exceeds truncation limit (strip HTML before measuring)
     const isLong = product.description.replace(/<[^>]+>/g, "").length > 250;
 
-    /* attribute selection */
+    // Update selected attributes when user selects an option
     const selectAttribute = (attributeId: string, itemId: string) => {
         setSelectedAttributes((prev) => ({
             ...prev,
@@ -35,13 +41,13 @@ export default function ProductDetailsPage() {
         }));
     };
 
-    /* check if all attributes selected */
+    // Check if all required attributes have been selected
     const allAttributesSelected = product.attributes.length === Object.keys(selectedAttributes).length;
 
     return (
         <div className="max-w-15/16 mx-auto grid grid-cols-[100px_1fr_400px] gap-8 p-[5vw] pt-[16vh]">
 
-            {/* LEFT: Gallery thumbnails */}
+            {/* LEFT: Product image thumbnails */}
             <div className="flex flex-col gap-3 overflow-y-auto max-h-[60vh] w-[8vw]" data-testid="product-gallery">
                 {product.gallery.map((img, index) => (
                     <img
@@ -56,7 +62,7 @@ export default function ProductDetailsPage() {
                 ))}
             </div>
 
-            {/* CENTER: Main Image */}
+            {/* CENTER: Main product image with navigation arrows */}
             <div className="relative h-[60vh] w-full max-w-[50vw] mx-auto">
                 {/* Image */}
                 <img
@@ -65,7 +71,7 @@ export default function ProductDetailsPage() {
                     className="w-full h-full min-w-[30vw] object-contain"
                 />
 
-                {/* Left arrow */}
+                {/* Navigate to previous image */}
                 {activeImage > 0 && (
                     <button
                         className="
@@ -79,7 +85,7 @@ export default function ProductDetailsPage() {
                     </button>
                 )}
 
-                {/* Right arrow */}
+                {/* Navigate to next image */}
                 {activeImage < product.gallery.length - 1 && (
                     <button
                         className="
@@ -94,13 +100,13 @@ export default function ProductDetailsPage() {
                 )}
             </div>
 
-            {/* RIGHT: Product info */}
+            {/* RIGHT: Product information (name, attributes, price, actions) */}
             <div className={"relative p-6 text-[clamp(8px,1.2vw,30px)]"}>
-                {/* Name */}
+                {/* Product brand and name */}
                 <h1 className="text-3xl font-semibold">{product.brand}</h1>
                 <h2 className="text-2xl mb-6">{product.name}</h2>
 
-                {/* Attributes */}
+                {/* Product attributes (size, color, etc.) */}
                 {product.attributes.map((attr) => {
                     const attrTestId = `product-attribute-${toKebabCase(attr.name)}`;
 
@@ -127,7 +133,7 @@ export default function ProductDetailsPage() {
                                         );
                                     }
 
-                                    /* text attribute (size etc.) */
+                                    /* text attribute (size, etc.) */
                                     return (
                                         <button
                                             key={item.external_id}
@@ -146,11 +152,11 @@ export default function ProductDetailsPage() {
                     );
                 })}
 
-                {/* Price */}
+                {/* Product price */}
                 <div className="font-bold mt-6">PRICE:</div>
                 <div className="font-semibold mb-6">{getFormattedPrice(product.prices)}</div>
 
-                {/* Add to cart */}
+                {/* Add to cart button (enabled only if all attributes selected and product is in stock) */}
                 <button
                     data-testid="add-to-cart"
                     disabled={!allAttributesSelected || !product.inStock}
@@ -168,8 +174,9 @@ export default function ProductDetailsPage() {
                     ADD TO CART
                 </button>
 
-                {/* Description */}
-                <div className="mt-6 eading-relaxed" data-testid="product-description">
+                {/* Product description with toggle (truncated or full HTML content) */}
+                {/* NOTE: html-react-parser is used to safely render HTML description content */}
+                <div className="mt-6 reading-relaxed" data-testid="product-description">
                     {descriptionExpanded ? parse(product.description) : truncateText(product.description, 250)}
                     {isLong && (
                         <button
