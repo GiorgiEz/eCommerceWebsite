@@ -1,5 +1,6 @@
 import { gql } from "graphql-request";
 
+/* GraphQL query to get all information about one specific product */
 export const GET_PRODUCT = gql`
 query ProductById($externalId: String!) {
   product(external_id: $externalId) {
