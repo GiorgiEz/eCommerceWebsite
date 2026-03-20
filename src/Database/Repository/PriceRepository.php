@@ -64,7 +64,7 @@ class PriceRepository
             $productId = $row['id'];
 
             $priceMap[$productId][] = [
-                'amount' => (float) $row['amount'],
+                'amount' => $row['amount'],
                 'currency' => [
                     'label' => $row['label'],
                     'symbol' => $row['symbol']

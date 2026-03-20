@@ -56,7 +56,7 @@ class PriceSeeder extends AbstractSeeder
                 $priceInsertStmt->execute([
                     ':product_id'  => $productMap[$product['id']],
                     ':currency_id' => $currencyMap[$currencyLabel],
-                    ':amount'      => (float) $price['amount']
+                    ':amount'      => round((float)$price['amount'], 2)
                 ]);
             }
         }
