@@ -15,7 +15,6 @@ desktop.ini
 
 # PHP / COMPOSER
 vendor/
-composer.lock
 
 # NODE / FRONTEND
 node_modules/
@@ -44,6 +43,17 @@ error_log
 .tmp/
 tmp/
 storage/
+
+# PHP runtime/cache
+*.cache
+*.tmp
+*.pid
+*.sock
+
+# Database dumps
+*.sql
+*.sqlite
+*.db
 
 # TEST COVERAGE
 coverage/
