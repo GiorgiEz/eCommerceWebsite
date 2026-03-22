@@ -81,3 +81,4 @@ frontend/*.sln
 frontend/*.sw?
 frontend/package-lock.json
 frontend/.env
+frontend/.vite

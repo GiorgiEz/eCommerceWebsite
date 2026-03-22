@@ -6,7 +6,6 @@ use App\GraphQL\Loaders\AttributeLoader;
 use App\GraphQL\Loaders\PriceLoader;
 use App\GraphQL\Types\SchemaTypes\MutationType;
 use App\GraphQL\Types\SchemaTypes\QueryType;
-use GraphQL\Error\DebugFlag;
 use GraphQL\GraphQL as GraphQLBase;
 use GraphQL\Type\Schema;
 use GraphQL\Type\SchemaConfig;
@@ -71,13 +70,14 @@ class GraphQL
             );
 
             // Convert execution result into array. Debug flag adds extra error information
-            $output = $result->toArray(DebugFlag::INCLUDE_DEBUG_MESSAGE);
+            $output = $result->toArray();
         } catch (Throwable $e) {
-            // If any exception occurs, return a GraphQL-compatible error response
+            error_log($e->getMessage()); // log internally
+
             $output = [
                 'errors' => [
                     [
-                        'message' => $e->getMessage()
+                        'message' => 'Internal server error'
                     ]
                 ]
             ];

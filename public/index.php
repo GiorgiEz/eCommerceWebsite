@@ -1,13 +1,22 @@
 <?php
 
-// Load Composer autoloader so all dependencies and classes are available
 require_once __DIR__ . '/../vendor/autoload.php';
+
+use Dotenv\Dotenv;
+use App\Controller\GraphQL as GraphQL;
 
 /*
 | CORS HEADERS
 */
+$allowedOrigins = [
+    "http://localhost:5173"
+];
 
-header("Access-Control-Allow-Origin: *");
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+
+if (in_array($origin, $allowedOrigins)) {
+    header("Access-Control-Allow-Origin: $origin");
+}
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 header("Content-Type: application/json; charset=UTF-8");
@@ -15,13 +24,34 @@ header("Content-Type: application/json; charset=UTF-8");
 /*
 Handle browser preflight request
 */
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+$method = $_SERVER['REQUEST_METHOD'];
+
+if (!in_array($method, ['GET', 'POST', 'OPTIONS'])) {
+    http_response_code(405);
+    exit;
+}
+
+if ($method === 'OPTIONS') {
     http_response_code(200);
     exit;
 }
 
-use Dotenv\Dotenv;
-use App\Controller\GraphQL as GraphQL;
+if ($method === 'POST') {
+    $input = json_decode(file_get_contents('php://input'), true);
+
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        http_response_code(400);
+        echo json_encode(["error" => "Invalid JSON"]);
+        exit;
+    }
+}
+
+set_exception_handler(function ($e) {
+    http_response_code(500);
+    echo json_encode([
+        "error" => "Internal Server Error"
+    ]);
+});
 
 // Load environment variables from .env file. __DIR__ = /public, so ../ points to project root
 $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
@@ -54,7 +84,7 @@ if ($basePath !== '/' && str_starts_with($uri, $basePath)) {
 }
 
 // Dispatch the request to the router. It checks request method and path and finds the matching route
-$routeInfo = $dispatcher->dispatch($_SERVER['REQUEST_METHOD'], $uri);
+$routeInfo = $dispatcher->dispatch($method, $uri);
 
 // status - 0 or 1.
 // handler - (GraphQL::handle) function
@@ -72,6 +102,12 @@ switch ($status) {
         break;
 
     case FastRoute\Dispatcher::FOUND:    // Route matched successfully
-        echo $handler($vars);  // Execute the handler and return the response
+        $response = $handler($vars);
+
+        if (is_array($response)) {
+            echo json_encode($response);
+        } else {
+            echo $response;
+        }
         break;
 }
