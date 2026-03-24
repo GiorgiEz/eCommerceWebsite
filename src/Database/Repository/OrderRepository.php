@@ -32,7 +32,8 @@ class OrderRepository
         try {
             // Insert main order record
             $stmt = $pdo->prepare("
-                INSERT INTO ORDERS (ORDER_DATE, ORDER_TOTAL_AMOUNT) VALUES (?, ?)
+                INSERT INTO orders (order_date, order_total_amount)
+                VALUES (?, ?)
             ");
 
             $stmt->execute([$orderDate, $totalAmount]);
@@ -43,12 +44,12 @@ class OrderRepository
                 $productId = $this->getProductInternalId($pdo, $item['productId']);
 
                 $stmt = $pdo->prepare("
-                    INSERT INTO ORDER_ITEMS
+                    INSERT INTO order_items
                     (
-                        ORDER_ITEM_ORDER_ID,
-                        ORDER_ITEM_PRODUCT_ID,
-                        ORDER_ITEM_QUANTITY,
-                        ORDER_ITEM_PRICE
+                        order_item_order_id,
+                        order_item_product_id,
+                        order_item_quantity,
+                        order_item_price
                     )
                     VALUES (?, ?, ?, ?)
                 ");
@@ -65,10 +66,10 @@ class OrderRepository
                     );
 
                     $stmt = $pdo->prepare("
-                        INSERT INTO ORDER_ITEM_ATTRIBUTES
+                        INSERT INTO order_item_attributes
                         (
-                            ORDER_ITEM_ATTRIBUTE_ORDER_ITEM_ID,
-                            ORDER_ITEM_ATTRIBUTE_ATTRIBUTE_ITEM_ID
+                            order_item_attribute_order_item_id,
+                            order_item_attribute_attribute_item_id
                         )
                         VALUES (?, ?)
                     ");
@@ -95,9 +96,7 @@ class OrderRepository
     private function getProductInternalId(PDO $pdo, string $externalId): int
     {
         $stmt = $pdo->prepare("
-            SELECT PRODUCT_ID
-            FROM PRODUCTS
-            WHERE PRODUCT_EXTERNAL_ID = ?
+            SELECT product_id FROM products WHERE product_external_id = ?
         ");
 
         $stmt->execute([$externalId]);
@@ -113,18 +112,12 @@ class OrderRepository
     private function getAttributeItemInternalId(PDO $pdo, string $attributeId, string $attributeItemId): int
     {
         $stmt = $pdo->prepare("
-            SELECT ai.ATTRIBUTE_ITEM_ID
-            FROM ATTRIBUTE_ITEMS ai
-            JOIN ATTRIBUTES a
-            ON ai.ATTRIBUTE_ITEM_ATTRIBUTE_ID = a.ATTRIBUTE_ID
-            WHERE a.ATTRIBUTE_EXTERNAL_ID = ?
-            AND ai.ATTRIBUTE_ITEM_EXTERNAL_ID = ?
+            SELECT ai.attribute_item_id FROM attribute_items ai
+            JOIN attributes a ON ai.attribute_item_attribute_id = a.attribute_id
+            WHERE a.attribute_external_id = ? AND ai.attribute_item_external_id = ?
         ");
 
-        $stmt->execute([
-            $attributeId,
-            $attributeItemId
-        ]);
+        $stmt->execute([$attributeId, $attributeItemId]);
 
         return (int)$stmt->fetchColumn();
     }
