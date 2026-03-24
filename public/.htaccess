@@ -1,6 +1,16 @@
 RewriteEngine On
 
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
+<FilesMatch "^\.">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
 
-RewriteRule ^ index.php [QSA,L]
+# GraphQL endpoint
+RewriteRule ^graphql$ index.php [L]
+
+# Existing files
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+# React fallback
+RewriteRule ^ index.html [L]

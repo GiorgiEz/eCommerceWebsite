@@ -58,7 +58,8 @@ export default function CartOverlay() {
     return (
         <div className="relative">
             {/* CART BUTTON: opens cart overlay */}
-            <button data-testid="cart-btn" className="relative h-[4vh] text-[2vw]" onClick={() => openCart()}> 🛒
+            <button data-testid="cart-btn" className="relative h-[4vh] text-[2vw]"
+                    onClick={() => isCartOpen ? closeCart() : openCart()}> 🛒
                 {/* Item count badge displayed when cart is not empty */}
                 {totalItems > 0 && (
                     <span className="absolute -top-2 -right-2 bg-black text-white text-xs w-5 h-5 flex
@@ -88,7 +89,10 @@ export default function CartOverlay() {
                     />
 
                     {/* PANEL: main cart container */}
-                    <div className="absolute right-0 mt-4 bg-white shadow-lg z-50 p-4 w-[25vw] max-h-[60vh] text-[1vw]">
+                    <div
+                        data-testid="cart-overlay"
+                        className="absolute right-0 mt-4 bg-white shadow-lg z-50 p-4 w-[25vw] max-h-[60vh] text-[1vw]"
+                    >
 
                         {/* ITEM COUNT HEADER */}
                         <div className="font-semibold mb-2">

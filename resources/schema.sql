@@ -11,154 +11,182 @@ CREATE DATABASE ecommerce_store
 USE ecommerce_store;
 
 /* 2. CREATE TABLES */
--- 1. CATEGORIES TABLE
-CREATE TABLE CATEGORIES (
-    CATEGORY_ID INT UNSIGNED AUTO_INCREMENT NOT NULL,
-    CATEGORY_NAME VARCHAR(20) NOT NULL,
+/* 1. CREATE DATABASE */
 
-    CONSTRAINT pk_category PRIMARY KEY (CATEGORY_ID),
-    CONSTRAINT uq_category_name UNIQUE (CATEGORY_NAME)
+DROP DATABASE IF EXISTS ecommerce_store;
+
+CREATE DATABASE ecommerce_store
+  CHARACTER SET utf8mb4
+  COLLATE utf8mb4_unicode_ci;
+
+USE ecommerce_store;
+
+/* 2. CREATE TABLES */
+
+-- 1. categories
+CREATE TABLE categories (
+                            category_id INT UNSIGNED AUTO_INCREMENT NOT NULL,
+                            category_name VARCHAR(20) NOT NULL,
+
+                            CONSTRAINT pk_category PRIMARY KEY (category_id),
+                            CONSTRAINT uq_category_name UNIQUE (category_name)
 ) ENGINE=InnoDB;
 
--- 2. PRODUCTS TABLE
-CREATE TABLE PRODUCTS (
-    PRODUCT_ID INT UNSIGNED AUTO_INCREMENT NOT NULL,
-    PRODUCT_CATEGORY_ID INT UNSIGNED NOT NULL,
-    PRODUCT_EXTERNAL_ID VARCHAR(100) NOT NULL,
-    PRODUCT_NAME VARCHAR(255) NOT NULL,
-    PRODUCT_DESCRIPTION TEXT NOT NULL,
-    PRODUCT_BRAND VARCHAR(255) NOT NULL,
-    PRODUCT_IN_STOCK TINYINT(1) NOT NULL,
+-- 2. products
+CREATE TABLE products (
+                          product_id INT UNSIGNED AUTO_INCREMENT NOT NULL,
+                          product_category_id INT UNSIGNED NOT NULL,
+                          product_external_id VARCHAR(100) NOT NULL,
+                          product_name VARCHAR(255) NOT NULL,
+                          product_description TEXT NOT NULL,
+                          product_brand VARCHAR(255) NOT NULL,
+                          product_in_stock TINYINT(1) NOT NULL,
 
-    CONSTRAINT pk_product PRIMARY KEY (PRODUCT_ID),
-    CONSTRAINT uq_product_external_id UNIQUE (PRODUCT_EXTERNAL_ID),
+                          CONSTRAINT pk_product PRIMARY KEY (product_id),
+                          CONSTRAINT uq_product_external_id UNIQUE (product_external_id),
 
-    CONSTRAINT fk_products_category FOREIGN KEY (PRODUCT_CATEGORY_ID) REFERENCES CATEGORIES(CATEGORY_ID)
-        ON DELETE RESTRICT
+                          CONSTRAINT fk_products_category FOREIGN KEY (product_category_id)
+                              REFERENCES categories(category_id)
+                              ON DELETE RESTRICT
 ) ENGINE=InnoDB;
 
--- 3. CURRENCIES TABLE
-CREATE TABLE CURRENCIES (
-    CURRENCY_ID INT UNSIGNED AUTO_INCREMENT NOT NULL,
-    CURRENCY_LABEL VARCHAR(10) NOT NULL,
-    CURRENCY_SYMBOL VARCHAR(5) NOT NULL,
+-- 3. currencies
+CREATE TABLE currencies (
+                            currency_id INT UNSIGNED AUTO_INCREMENT NOT NULL,
+                            currency_label VARCHAR(10) NOT NULL,
+                            currency_symbol VARCHAR(5) NOT NULL,
 
-    CONSTRAINT pk_currency PRIMARY KEY (CURRENCY_ID),
-    CONSTRAINT uq_currency_label UNIQUE (CURRENCY_LABEL)
+                            CONSTRAINT pk_currency PRIMARY KEY (currency_id),
+                            CONSTRAINT uq_currency_label UNIQUE (currency_label)
 ) ENGINE=InnoDB;
 
--- 4. PRICES TABLE
-CREATE TABLE PRICES (
-    PRICE_ID INT UNSIGNED AUTO_INCREMENT NOT NULL,
-    PRICE_PRODUCT_ID INT UNSIGNED NOT NULL,
-    PRICE_CURRENCY_ID INT UNSIGNED NOT NULL,
-    PRICE_AMOUNT DECIMAL(10,2) NOT NULL,
+-- 4. prices
+CREATE TABLE prices (
+                        price_id INT UNSIGNED AUTO_INCREMENT NOT NULL,
+                        price_product_id INT UNSIGNED NOT NULL,
+                        price_currency_id INT UNSIGNED NOT NULL,
+                        price_amount DECIMAL(10,2) NOT NULL,
 
-    CONSTRAINT pk_price PRIMARY KEY (PRICE_ID),
-    CONSTRAINT uq_price_product_currency UNIQUE (PRICE_PRODUCT_ID, PRICE_CURRENCY_ID),
+                        CONSTRAINT pk_price PRIMARY KEY (price_id),
+                        CONSTRAINT uq_price_product_currency UNIQUE (price_product_id, price_currency_id),
 
-    CONSTRAINT fk_prices_product FOREIGN KEY (PRICE_PRODUCT_ID) REFERENCES PRODUCTS(PRODUCT_ID)
-        ON DELETE CASCADE,
+                        CONSTRAINT fk_prices_product FOREIGN KEY (price_product_id)
+                            REFERENCES products(product_id)
+                            ON DELETE CASCADE,
 
-    CONSTRAINT fk_prices_currency FOREIGN KEY (PRICE_CURRENCY_ID) REFERENCES CURRENCIES(CURRENCY_ID)
-        ON DELETE RESTRICT
+                        CONSTRAINT fk_prices_currency FOREIGN KEY (price_currency_id)
+                            REFERENCES currencies(currency_id)
+                            ON DELETE RESTRICT
 ) ENGINE=InnoDB;
 
--- 5. IMAGES TABLE
-CREATE TABLE IMAGES (
-    IMAGE_ID INT UNSIGNED AUTO_INCREMENT NOT NULL,
-    IMAGE_PRODUCT_ID INT UNSIGNED NOT NULL,
-    IMAGE_URL VARCHAR(255) NOT NULL,
+-- 5. images
+CREATE TABLE images (
+                        image_id INT UNSIGNED AUTO_INCREMENT NOT NULL,
+                        image_product_id INT UNSIGNED NOT NULL,
+                        image_url VARCHAR(255) NOT NULL,
 
-    CONSTRAINT pk_image PRIMARY KEY (IMAGE_ID),
-    CONSTRAINT uq_image_product_url UNIQUE (IMAGE_PRODUCT_ID, IMAGE_URL),
+                        CONSTRAINT pk_image PRIMARY KEY (image_id),
+                        CONSTRAINT uq_image_product_url UNIQUE (image_product_id, image_url),
 
-    CONSTRAINT fk_images_product FOREIGN KEY (IMAGE_PRODUCT_ID) REFERENCES PRODUCTS(PRODUCT_ID)
-        ON DELETE CASCADE
+                        CONSTRAINT fk_images_product FOREIGN KEY (image_product_id)
+                            REFERENCES products(product_id)
+                            ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
--- 6. ATTRIBUTES TABLE
-CREATE TABLE ATTRIBUTES (
-    ATTRIBUTE_ID INT UNSIGNED AUTO_INCREMENT NOT NULL,
-    ATTRIBUTE_EXTERNAL_ID VARCHAR(100) NOT NULL,
-    ATTRIBUTE_NAME VARCHAR(100) NOT NULL,
-    ATTRIBUTE_TYPE VARCHAR(20) NOT NULL,
+-- 6. attributes
+CREATE TABLE attributes (
+                            attribute_id INT UNSIGNED AUTO_INCREMENT NOT NULL,
+                            attribute_external_id VARCHAR(100) NOT NULL,
+                            attribute_name VARCHAR(100) NOT NULL,
+                            attribute_type VARCHAR(20) NOT NULL,
 
-    CONSTRAINT pk_attribute PRIMARY KEY (ATTRIBUTE_ID),
-    CONSTRAINT uq_attribute_external UNIQUE (ATTRIBUTE_EXTERNAL_ID)
+                            CONSTRAINT pk_attribute PRIMARY KEY (attribute_id),
+                            CONSTRAINT uq_attribute_external UNIQUE (attribute_external_id)
 ) ENGINE=InnoDB;
 
--- 7. ATTRIBUTES_ITEMS TABLE
-CREATE TABLE ATTRIBUTE_ITEMS (
-    ATTRIBUTE_ITEM_ID INT UNSIGNED AUTO_INCREMENT NOT NULL,
-    ATTRIBUTE_ITEM_ATTRIBUTE_ID INT UNSIGNED NOT NULL,
-    ATTRIBUTE_ITEM_EXTERNAL_ID VARCHAR(100) NOT NULL,
-    ATTRIBUTE_ITEM_DISPLAY_VALUE VARCHAR(100) NOT NULL,
-    ATTRIBUTE_ITEM_VALUE VARCHAR(100) NOT NULL,
+-- 7. attribute_items
+CREATE TABLE attribute_items (
+                                 attribute_item_id INT UNSIGNED AUTO_INCREMENT NOT NULL,
+                                 attribute_item_attribute_id INT UNSIGNED NOT NULL,
+                                 attribute_item_external_id VARCHAR(100) NOT NULL,
+                                 attribute_item_display_value VARCHAR(100) NOT NULL,
+                                 attribute_item_value VARCHAR(100) NOT NULL,
 
-    CONSTRAINT pk_item PRIMARY KEY (ATTRIBUTE_ITEM_ID),
-    CONSTRAINT uq_item_attribute_external UNIQUE (ATTRIBUTE_ITEM_ATTRIBUTE_ID, ATTRIBUTE_ITEM_EXTERNAL_ID),
+                                 CONSTRAINT pk_item PRIMARY KEY (attribute_item_id),
+                                 CONSTRAINT uq_item_attribute_external
+                                     UNIQUE (attribute_item_attribute_id, attribute_item_external_id),
 
-    CONSTRAINT fk_items_attribute FOREIGN KEY (ATTRIBUTE_ITEM_ATTRIBUTE_ID) REFERENCES ATTRIBUTES(ATTRIBUTE_ID)
-        ON DELETE RESTRICT
+                                 CONSTRAINT fk_items_attribute FOREIGN KEY (attribute_item_attribute_id)
+                                     REFERENCES attributes(attribute_id)
+                                     ON DELETE RESTRICT
 ) ENGINE=InnoDB;
 
--- 8. PRODUCT_ATTRIBUTE_ITEMS TABLE
-CREATE TABLE PRODUCT_ATTRIBUTE_ITEMS (
-    PRODUCT_ATTRIBUTE_ITEM_ID INT UNSIGNED AUTO_INCREMENT NOT NULL,
-    PRODUCT_ATTRIBUTE_ITEM_ATTRIBUTE_ITEM_ID INT UNSIGNED NOT NULL,
-    PRODUCT_ATTRIBUTE_ITEM_PRODUCT_ID INT UNSIGNED NOT NULL,
+-- 8. product_attribute_items
+CREATE TABLE product_attribute_items (
+                                         product_attribute_item_id INT UNSIGNED AUTO_INCREMENT NOT NULL,
+                                         product_attribute_item_attribute_item_id INT UNSIGNED NOT NULL,
+                                         product_attribute_item_product_id INT UNSIGNED NOT NULL,
 
-    CONSTRAINT pk_product_attribute_item PRIMARY KEY (PRODUCT_ATTRIBUTE_ITEM_ID),
-    CONSTRAINT uq_product_attribute_item UNIQUE
-        (PRODUCT_ATTRIBUTE_ITEM_ATTRIBUTE_ITEM_ID, PRODUCT_ATTRIBUTE_ITEM_PRODUCT_ID),
+                                         CONSTRAINT pk_product_attribute_item PRIMARY KEY (product_attribute_item_id),
+                                         CONSTRAINT uq_product_attribute_item UNIQUE
+                                             (product_attribute_item_attribute_item_id, product_attribute_item_product_id),
 
-    CONSTRAINT fk_product_attribute_items_attribute_item FOREIGN KEY (PRODUCT_ATTRIBUTE_ITEM_ATTRIBUTE_ITEM_ID)
-        REFERENCES ATTRIBUTE_ITEMS(ATTRIBUTE_ITEM_ID) ON DELETE CASCADE,
+                                         CONSTRAINT fk_product_attribute_items_attribute_item FOREIGN KEY
+                                             (product_attribute_item_attribute_item_id)
+                                             REFERENCES attribute_items(attribute_item_id)
+                                             ON DELETE CASCADE,
 
-    CONSTRAINT fk_product_attribute_items_product FOREIGN KEY (PRODUCT_ATTRIBUTE_ITEM_PRODUCT_ID)
-        REFERENCES PRODUCTS(PRODUCT_ID) ON DELETE CASCADE
+                                         CONSTRAINT fk_product_attribute_items_product FOREIGN KEY
+                                             (product_attribute_item_product_id)
+                                             REFERENCES products(product_id)
+                                             ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
--- 9. ORDERS TABLE
-CREATE TABLE ORDERS (
-    ORDER_ID INT UNSIGNED AUTO_INCREMENT NOT NULL,
-    ORDER_DATE DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    ORDER_TOTAL_AMOUNT DECIMAL(10,2) NOT NULL,
+-- 9. orders
+CREATE TABLE orders (
+                        order_id INT UNSIGNED AUTO_INCREMENT NOT NULL,
+                        order_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                        order_total_amount DECIMAL(10,2) NOT NULL,
 
-    CONSTRAINT pk_order PRIMARY KEY (ORDER_ID)
+                        CONSTRAINT pk_order PRIMARY KEY (order_id)
 ) ENGINE=InnoDB;
 
--- 10. ORDER_ITEMS TABLE
-CREATE TABLE ORDER_ITEMS (
-    ORDER_ITEM_ID INT UNSIGNED AUTO_INCREMENT NOT NULL,
-    ORDER_ITEM_ORDER_ID INT UNSIGNED NOT NULL,
-    ORDER_ITEM_PRODUCT_ID INT UNSIGNED NOT NULL,
-    ORDER_ITEM_QUANTITY INT UNSIGNED NOT NULL,
-    ORDER_ITEM_PRICE DECIMAL(10,2) NOT NULL,
+-- 10. order_items
+CREATE TABLE order_items (
+                             order_item_id INT UNSIGNED AUTO_INCREMENT NOT NULL,
+                             order_item_order_id INT UNSIGNED NOT NULL,
+                             order_item_product_id INT UNSIGNED NOT NULL,
+                             order_item_quantity INT UNSIGNED NOT NULL,
+                             order_item_price DECIMAL(10,2) NOT NULL,
 
-    CONSTRAINT pk_order_item PRIMARY KEY (ORDER_ITEM_ID),
+                             CONSTRAINT pk_order_item PRIMARY KEY (order_item_id),
 
-    CONSTRAINT fk_order_items_order FOREIGN KEY (ORDER_ITEM_ORDER_ID) REFERENCES ORDERS(ORDER_ID)
-        ON DELETE CASCADE,
+                             CONSTRAINT fk_order_items_order FOREIGN KEY (order_item_order_id)
+                                 REFERENCES orders(order_id)
+                                 ON DELETE CASCADE,
 
-    CONSTRAINT fk_order_items_product FOREIGN KEY (ORDER_ITEM_PRODUCT_ID) REFERENCES PRODUCTS(PRODUCT_ID)
-        ON DELETE RESTRICT
+                             CONSTRAINT fk_order_items_product FOREIGN KEY (order_item_product_id)
+                                 REFERENCES products(product_id)
+                                 ON DELETE RESTRICT
 ) ENGINE=InnoDB;
 
--- 11. ORDER_ITEM_ATTRIBUTES TABLE
-CREATE TABLE ORDER_ITEM_ATTRIBUTES (
-    ORDER_ITEM_ATTRIBUTE_ID INT UNSIGNED AUTO_INCREMENT NOT NULL,
-    ORDER_ITEM_ATTRIBUTE_ORDER_ITEM_ID INT UNSIGNED NOT NULL,
-    ORDER_ITEM_ATTRIBUTE_ATTRIBUTE_ITEM_ID INT UNSIGNED NOT NULL,
+-- 11. order_item_attributes
+CREATE TABLE order_item_attributes (
+                                       order_item_attribute_id INT UNSIGNED AUTO_INCREMENT NOT NULL,
+                                       order_item_attribute_order_item_id INT UNSIGNED NOT NULL,
+                                       order_item_attribute_attribute_item_id INT UNSIGNED NOT NULL,
 
-    CONSTRAINT pk_order_item_attribute PRIMARY KEY (ORDER_ITEM_ATTRIBUTE_ID),
-    CONSTRAINT uq_order_item_attribute
-        UNIQUE (ORDER_ITEM_ATTRIBUTE_ORDER_ITEM_ID, ORDER_ITEM_ATTRIBUTE_ATTRIBUTE_ITEM_ID),
+                                       CONSTRAINT pk_order_item_attribute PRIMARY KEY (order_item_attribute_id),
+                                       CONSTRAINT uq_order_item_attribute
+                                           UNIQUE (order_item_attribute_order_item_id, order_item_attribute_attribute_item_id),
 
-    CONSTRAINT fk_order_item_attributes_order_item FOREIGN KEY (ORDER_ITEM_ATTRIBUTE_ORDER_ITEM_ID)
-        REFERENCES ORDER_ITEMS(ORDER_ITEM_ID) ON DELETE CASCADE,
+                                       CONSTRAINT fk_order_item_attributes_order_item FOREIGN KEY
+                                           (order_item_attribute_order_item_id)
+                                           REFERENCES order_items(order_item_id)
+                                           ON DELETE CASCADE,
 
-    CONSTRAINT fk_order_item_attributes_attribute_item FOREIGN KEY (ORDER_ITEM_ATTRIBUTE_ATTRIBUTE_ITEM_ID)
-        REFERENCES ATTRIBUTE_ITEMS(ATTRIBUTE_ITEM_ID) ON DELETE RESTRICT
+                                       CONSTRAINT fk_order_item_attributes_attribute_item FOREIGN KEY
+                                           (order_item_attribute_attribute_item_id)
+                                           REFERENCES attribute_items(attribute_item_id)
+                                           ON DELETE RESTRICT
 ) ENGINE=InnoDB;

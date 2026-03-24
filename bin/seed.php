@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-// Ensure the script is executed from the command line only
+# Ensure the script is executed from the command line only
 if (php_sapi_name() !== 'cli') {
     exit('This script must be run from the CLI.' . PHP_EOL);
 }

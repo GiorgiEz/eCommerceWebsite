@@ -10,20 +10,19 @@ import { CartProvider } from "./context/CartContext.tsx";
 function App() {
     return (
         <BrowserRouter>
-            {/* Provides global category state */}
             <CategoryProvider>
-                {/* Provides global cart state */}
                 <CartProvider>
 
-                    {/* Persistent header (navigation + cart) */}
                     <Header />
 
-                    {/* Application routes */}
                     <Routes>
-                        {/* Product listing page */}
+                        {/* Home = default category */}
                         <Route path="/" element={<ProductListPage />} />
 
-                        {/* Product details page (dynamic route by externalId) */}
+                        {/* ✅ Category routes */}
+                        <Route path="/:category" element={<ProductListPage />} />
+
+                        {/* Product page */}
                         <Route path="/product/:externalId" element={<ProductDetailsPage />} />
                     </Routes>
 

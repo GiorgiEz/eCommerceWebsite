@@ -1,8 +1,8 @@
 import { useCategories } from "../hooks/useCategories";
 import { useCategory } from "../context/CategoryContext";
-import { useLocation, useNavigate } from "react-router-dom";
 import type { Category } from "../utils/types.ts";
 import CartOverlay from "./CartOverlay";
+import { Link } from "react-router-dom";
 
 
 /*
@@ -13,11 +13,6 @@ export default function Header() {
     const { data } = useCategories();
     const { category, setCategory } = useCategory();
 
-    // React Router hooks for reading current path and navigating programmatically
-    const location = useLocation();
-    const navigate = useNavigate();
-
-    const isHomePage = location.pathname === "/";
     const categories: Category[] = (data?.categories ?? []);
 
     // Renders a category button and highlights it if it is the currently selected category
@@ -25,8 +20,9 @@ export default function Header() {
         const isActive = category === name;
 
         return (
-            <button
+            <Link
                 key={name}
+                to={`/${name}`}
                 onClick={() => setCategory(name)}
                 data-testid={isActive ? "active-category-link" : "category-link"}
                 className={`uppercase text-sm font-medium pb-1 border-b-2 h-[4vh] text-[clamp(10px,1.5vw,20px)] ${
@@ -36,7 +32,7 @@ export default function Header() {
                 }`}
             >
                 {name}
-            </button>
+            </Link>
         );
     };
 
@@ -46,18 +42,9 @@ export default function Header() {
 
                 {/* LEFT SIDE: Category navigation or back button depending on route */}
                 <nav className="flex items-center gap-6">
-                    {isHomePage ? (
-                        <>
-                            {categories.map((c) => renderCategoryButton(c.name))}
-                        </>
-                    ) : (
-                        <button
-                            onClick={() => navigate("/")}
-                            className="uppercase font-medium cursor-pointer hover:scale-110 h-[4vh] text-[clamp(20px,1.2vw,30px)]"
-                        >
-                            BACK
-                        </button>
-                    )}
+                    {
+                        <> {categories.map((c) => renderCategoryButton(c.name))}</>
+                    }
                 </nav>
 
                 {/* CENTER: Logo positioned absolutely in the middle */}

@@ -1,6 +1,10 @@
 import { GraphQLClient } from "graphql-request";
 
-// Initialize GraphQL client for sending requests to the backend API endpoint
-export const client = new GraphQLClient(
-    "http://localhost/eCommerceWebsite/public/graphql"
-);
+const is_dev = true;
+
+const endpoint =
+    is_dev
+        ? "http://localhost/eCommerceWebsite/public/graphql"
+        : window.location.origin + "/graphql";
+
+export const client = new GraphQLClient(endpoint);

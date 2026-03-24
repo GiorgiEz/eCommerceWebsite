@@ -100,28 +100,33 @@ export default function ProductDetailsPage() {
                 )}
             </div>
 
-            {/* RIGHT: Product information (name, attributes, price, actions) */}
             <div className={"relative p-6 text-[clamp(8px,1.2vw,30px)]"}>
                 {/* Product brand and name */}
                 <h1 className="text-3xl font-semibold">{product.brand}</h1>
                 <h2 className="text-2xl mb-6">{product.name}</h2>
 
-                {/* Product attributes (size, color, etc.) */}
+                {/* Product attributes */}
                 {product.attributes.map((attr) => {
-                    const attrTestId = `product-attribute-${toKebabCase(attr.name)}`;
+                    const attrKebab = toKebabCase(attr.name);
+                    const attrTestId = `product-attribute-${attrKebab}`;
 
                     return (
                         <div key={attr.external_id} className="mb-6" data-testid={attrTestId}>
                             <div className="font-bold mb-2">{attr.name}:</div>
+
                             <div className="flex gap-2">
                                 {attr.items.map((item: AttributeItem) => {
-                                    const isSelected = selectedAttributes[attr.external_id] === item.external_id;
+                                    const isSelected =
+                                        selectedAttributes[attr.external_id] === item.external_id;
 
-                                    /* color swatch */
+                                    const itemTestId = `product-attribute-${attrKebab}-${item.displayValue}`;
+
+                                    /* COLOR SWATCH */
                                     if (attr.type === "swatch") {
                                         return (
                                             <button
                                                 key={item.external_id}
+                                                data-testid={itemTestId}   // ✅ REQUIRED
                                                 onClick={() =>
                                                     selectAttribute(attr.external_id, item.external_id)
                                                 }
@@ -133,11 +138,14 @@ export default function ProductDetailsPage() {
                                         );
                                     }
 
-                                    /* text attribute (size, etc.) */
+                                    /* TEXT ATTRIBUTE */
                                     return (
                                         <button
                                             key={item.external_id}
-                                            onClick={() => selectAttribute(attr.external_id, item.external_id)}
+                                            data-testid={itemTestId}   // ✅ REQUIRED
+                                            onClick={() =>
+                                                selectAttribute(attr.external_id, item.external_id)
+                                            }
                                             className={`px-4 py-2 border ${
                                                 isSelected ? "bg-black text-white" : "bg-white"
                                             }`}
@@ -146,7 +154,6 @@ export default function ProductDetailsPage() {
                                         </button>
                                     );
                                 })}
-
                             </div>
                         </div>
                     );
@@ -154,9 +161,11 @@ export default function ProductDetailsPage() {
 
                 {/* Product price */}
                 <div className="font-bold mt-6">PRICE:</div>
-                <div className="font-semibold mb-6">{getFormattedPrice(product.prices)}</div>
+                <div className="font-semibold mb-6" data-testid="product-price">
+                    {getFormattedPrice(product.prices)}
+                </div>
 
-                {/* Add to cart button (enabled only if all attributes selected and product is in stock) */}
+                {/* Add to cart */}
                 <button
                     data-testid="add-to-cart"
                     disabled={!allAttributesSelected || !product.inStock}
@@ -167,17 +176,19 @@ export default function ProductDetailsPage() {
                     }`}
                     onClick={() => {
                         if (!allAttributesSelected || !product.inStock) return;
-                        addToCart({product, selectedAttributes, quantity: 1});
+                        addToCart({ product, selectedAttributes, quantity: 1 });
                         openCart();
                     }}
                 >
                     ADD TO CART
                 </button>
 
-                {/* Product description with toggle (truncated or full HTML content) */}
-                {/* NOTE: html-react-parser is used to safely render HTML description content */}
+                {/* Product description */}
                 <div className="mt-6 reading-relaxed" data-testid="product-description">
-                    {descriptionExpanded ? parse(product.description) : truncateText(product.description, 250)}
+                    {descriptionExpanded
+                        ? parse(product.description)
+                        : truncateText(product.description, 250)}
+
                     {isLong && (
                         <button
                             className="ml-2 text-green-600 font-medium"
@@ -187,7 +198,6 @@ export default function ProductDetailsPage() {
                         </button>
                     )}
                 </div>
-
             </div>
         </div>
     );
