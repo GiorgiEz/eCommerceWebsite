@@ -284,7 +284,7 @@ Example:
 
 ---
 
-##3 Attributes
+### Attributes
 
 Products can have multiple attributes.
 
