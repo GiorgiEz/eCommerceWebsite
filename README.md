@@ -169,7 +169,7 @@ All API requests should be sent to this endpoint.
 
 ---
 
-##3 7. Running the Frontend
+### 7. Running the Frontend
 
 Navigate to the frontend directory and install dependencies:
 
