@@ -10,6 +10,7 @@ error_log("PHP HIT: " . $_SERVER['REQUEST_METHOD'] . " " . $_SERVER['REQUEST_URI
 /*
 | CORS HEADERS
 */
+// Allowing localhost:5173 for local development using vite
 header("Access-Control-Allow-Origin: http://localhost:5173");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
@@ -20,13 +21,14 @@ Handle browser preflight request
 */
 $method = $_SERVER['REQUEST_METHOD'];
 
+// Allow only specific HTTP methods
 if (!in_array($method, ['GET', 'POST', 'OPTIONS'])) {
     http_response_code(405);
     exit;
 }
 
 if ($method === 'OPTIONS') {
-    http_response_code(200);
+    http_response_code(200); // OK
     exit;
 }
 
@@ -34,14 +36,14 @@ if ($method === 'POST') {
     $input = json_decode(file_get_contents('php://input'), true);
 
     if (json_last_error() !== JSON_ERROR_NONE) {
-        http_response_code(400);
+        http_response_code(400); // If json invalid, bad request
         echo json_encode(["error" => "Invalid JSON"]);
         exit;
     }
 }
 
 set_exception_handler(function ($e) {
-    http_response_code(500);
+    http_response_code(500); // Internal server error
     echo json_encode([
         "error" => "Internal Server Error"
     ]);
