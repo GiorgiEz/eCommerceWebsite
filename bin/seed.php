@@ -11,6 +11,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use Dotenv\Dotenv;
 
+# Loads .env file
 $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
 
@@ -50,7 +51,7 @@ try {
     // Execute database seeding
     $manager->run($pdo, $data);
 
-    echo 'Database insertion completed successfully.' . PHP_EOL;
+    echo 'Database Insertion Successful' . PHP_EOL;
 
 } catch (Throwable $exception) {
     // Catch any runtime, database, or seeding errors
