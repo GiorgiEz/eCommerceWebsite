@@ -10,7 +10,6 @@ import { toKebabCase, getFormattedPrice } from "../utils/funcs.ts"
 export default function ProductListPage() {
     const { category } = useCategory();
     const { data, loading } = useProducts(category);
-
     const products: Product[] = data?.products ?? [];
 
     // React Router hook for navigating to product detail page

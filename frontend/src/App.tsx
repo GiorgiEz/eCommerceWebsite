@@ -19,7 +19,7 @@ function App() {
                         {/* Home = default category */}
                         <Route path="/" element={<ProductListPage />} />
 
-                        {/* ✅ Category routes */}
+                        {/* Category routes */}
                         <Route path="/:category" element={<ProductListPage />} />
 
                         {/* Product page */}

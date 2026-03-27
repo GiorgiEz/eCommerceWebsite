@@ -126,7 +126,7 @@ export default function ProductDetailsPage() {
                                         return (
                                             <button
                                                 key={item.external_id}
-                                                data-testid={itemTestId}   // ✅ REQUIRED
+                                                data-testid={itemTestId}
                                                 onClick={() =>
                                                     selectAttribute(attr.external_id, item.external_id)
                                                 }
@@ -142,7 +142,7 @@ export default function ProductDetailsPage() {
                                     return (
                                         <button
                                             key={item.external_id}
-                                            data-testid={itemTestId}   // ✅ REQUIRED
+                                            data-testid={itemTestId}
                                             onClick={() =>
                                                 selectAttribute(attr.external_id, item.external_id)
                                             }
@@ -186,8 +186,7 @@ export default function ProductDetailsPage() {
                 {/* Product description */}
                 <div className="mt-6 reading-relaxed" data-testid="product-description">
                     {descriptionExpanded
-                        ? parse(product.description)
-                        : truncateText(product.description, 250)}
+                        ? parse(product.description) : truncateText(product.description, 250)}
 
                     {isLong && (
                         <button
